@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="nb">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>O-ringkalkulator · klem, sporfylling og spormål</title>
-<meta name="description" content="Dimensjoner og kontroller spor for O-ringer: klem, sporfylling, strekk og ekstrusjonsgap etter AS568 / ISO 3601.">
+<title>O-ring calculator · squeeze, gland fill and groove dimensions</title>
+<meta name="description" content="Size and check O-ring grooves: squeeze, gland fill, stretch and extrusion gap to AS568 / ISO 3601.">
 <style>
 :root{
   --bg:#f6f7f9; --panel:#ffffff; --ink:#15181d; --dim:#5c6470; --faint:#8b939f;
@@ -36,7 +36,7 @@ a{color:var(--accent);text-underline-offset:3px;text-decoration-thickness:1px}
 [hidden]{display:none !important}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 
-/* ---------- ramme ---------- */
+/* ---------- frame ---------- */
 .wrap{max-width:1180px;margin:0 auto;padding:0 20px}
 header.top{border-bottom:1px solid var(--line);background:var(--panel)}
 .top-in{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 0}
@@ -48,7 +48,7 @@ header.top{border-bottom:1px solid var(--line);background:var(--panel)}
 h1{font-size:clamp(28px,4.4vw,38px);line-height:1.15;letter-spacing:-1px;margin:10px 0 12px;font-weight:680}
 .hero p{margin:0;color:var(--dim);font-size:16px}
 
-/* ---------- oppsett ---------- */
+/* ---------- layout ---------- */
 .grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:20px;align-items:start;padding-bottom:36px}
 @media (max-width:900px){.grid{grid-template-columns:1fr}}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
@@ -59,7 +59,7 @@ h1{font-size:clamp(28px,4.4vw,38px);line-height:1.15;letter-spacing:-1px;margin:
 .sect-h h2{font-size:14.5px;margin:0;font-weight:640;letter-spacing:-.1px}
 .sect-h .spacer{flex:1}
 
-/* ---------- felt ---------- */
+/* ---------- fields ---------- */
 label{display:block;font-size:12.5px;color:var(--dim);margin:0 0 6px;font-weight:500}
 input[type=text],select{
   width:100%;height:40px;padding:0 11px;border:1px solid var(--line-strong);border-radius:7px;
@@ -75,7 +75,7 @@ input[aria-invalid=true]{border-color:var(--bad);background:var(--bad-soft)}
 .unit input{padding-right:40px}
 .unit span{position:absolute;right:11px;top:0;line-height:40px;color:var(--faint);font-size:12px;pointer-events:none}
 
-/* valg av tetningstype */
+/* seal type selection */
 .types{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .type{border:1px solid var(--line-strong);border-radius:8px;padding:11px 4px 9px;display:grid;justify-items:center;gap:7px;color:var(--dim);font-size:12.5px;font-weight:550;transition:.12s}
 .type svg{width:56px;height:30px}
@@ -89,11 +89,18 @@ input[aria-invalid=true]{border-color:var(--bad);background:var(--bad-soft)}
 .seg input:disabled+span{opacity:.4;cursor:not-allowed}
 .seg input:focus-visible+span{outline:2px solid var(--accent);outline-offset:1px}
 .row-between{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:16px;flex-wrap:wrap}
+
+/* simple / advanced mode */
+.mode{display:flex;align-items:center;gap:12px}
+body.simple .adv{display:none !important}
+body.simple .dims-head,body.simple .dim{grid-template-columns:minmax(96px,1.3fr) minmax(64px,.85fr)}
+.mode-note{color:var(--faint);font-size:12.5px;margin:11px 0 0}
+body:not(.simple) .mode-note{display:none}
 .note{color:var(--dim);font-size:12.5px;margin:11px 0 0}
 .check{display:flex;align-items:center;gap:9px;font-size:13px;color:var(--ink);margin-bottom:14px;cursor:pointer}
 .check input{width:16px;height:16px;accent-color:var(--accent);margin:0}
 
-/* spormål */
+/* groove dimensions */
 .dims-head{display:grid;grid-template-columns:minmax(96px,1.3fr) minmax(64px,.85fr) 54px 54px 30px;gap:7px;font-size:10.5px;color:var(--faint);letter-spacing:.4px;text-transform:uppercase;margin-bottom:7px}
 .dim{display:grid;grid-template-columns:minmax(96px,1.3fr) minmax(64px,.85fr) 54px 54px 30px;gap:7px;align-items:center;margin-bottom:8px}
 .dim label{margin:0;font-size:12.5px;color:var(--ink)}
@@ -107,7 +114,7 @@ input[aria-invalid=true]{border-color:var(--bad);background:var(--bad-soft)}
 .lock[aria-pressed=true] .sh-open{display:none}
 .lock[aria-pressed=false] .sh-shut{display:none}
 
-/* knapper */
+/* buttons */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:1px solid var(--line-strong);border-radius:7px;padding:8px 13px;font-size:12.5px;font-weight:600;color:var(--dim);background:var(--panel);transition:.12s}
 .btn:hover{border-color:var(--accent);color:var(--accent-ink)}
 .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
@@ -116,7 +123,7 @@ input[aria-invalid=true]{border-color:var(--bad);background:var(--bad-soft)}
 .msg{font-size:12.5px;margin:12px 0 0;color:var(--accent-ink)}
 .msg.bad{color:var(--bad)}
 
-/* ---------- resultat ---------- */
+/* ---------- result ---------- */
 .res{position:sticky;top:16px;display:grid;gap:16px}
 @media (max-width:900px){.res{position:static}}
 .res-top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 22px;border-bottom:1px solid var(--line)}
@@ -126,7 +133,7 @@ input[aria-invalid=true]{border-color:var(--bad);background:var(--bad-soft)}
 .pill.warn{background:var(--warn-soft);color:var(--warn)}
 .pill.bad{background:var(--bad-soft);color:var(--bad)}
 .figure{background:var(--field-ro);border-bottom:1px solid var(--line);position:relative}
-.figure svg{display:block;width:100%;height:208px}
+.figure svg{display:block;width:100%;height:auto}
 .figure figcaption{pointer-events:none}
 .figure figcaption{position:absolute;left:18px;top:11px;font-size:10px;letter-spacing:.9px;text-transform:uppercase;color:var(--faint)}
 .res-body{padding:18px 22px}
@@ -158,7 +165,7 @@ table.res-tab td em{font-style:normal;color:var(--faint);font-size:11.5px}
 .actions{display:flex;gap:8px;margin-top:18px;flex-wrap:wrap}
 .empty{padding:26px 22px;color:var(--dim);font-size:13.5px}
 
-/* ---------- forklaring ---------- */
+/* ---------- explanation ---------- */
 .explain{padding:8px 0 56px}
 .explain-head{max-width:660px;margin:26px 0 26px}
 .explain-head h2{font-size:clamp(22px,3vw,28px);letter-spacing:-.7px;margin:0 0 10px;font-weight:680}
@@ -167,19 +174,24 @@ table.res-tab td em{font-style:normal;color:var(--faint);font-size:11.5px}
 .topic{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:20px 22px;box-shadow:var(--shadow)}
 .topic h3{font-size:15px;margin:0 0 4px;font-weight:640;letter-spacing:-.2px}
 .topic .lead{color:var(--accent-ink);font-size:11.5px;font-weight:650;letter-spacing:.7px;text-transform:uppercase;margin:0 0 9px}
-.topic p{margin:0 0 10px;font-size:13.5px;color:var(--dim)}
+.topic p{margin:0 0 10px;font-size:13.5px;line-height:1.65;color:var(--dim)}
 .topic p:last-child{margin-bottom:0}
 .topic strong{color:var(--ink);font-weight:600}
-.topic ul{margin:0 0 10px;padding-left:18px;font-size:13.5px;color:var(--dim)}
-.topic li{margin-bottom:5px}
+.topic ul{margin:0 0 10px;padding-left:18px;font-size:13.5px;line-height:1.6;color:var(--dim)}
+.topic li{margin-bottom:6px}
 .topic li:last-child{margin-bottom:0}
-.rule{display:flex;gap:10px;align-items:baseline;background:var(--field-ro);border-radius:7px;padding:10px 12px;margin:0 0 12px;font-size:13px}
-.rule b{color:var(--accent-ink);font-weight:650;white-space:nowrap}
-.rule span{color:var(--dim)}
+.topic.wide{grid-column:1/-1}
+.topic.wide .tbl-scroll{margin-bottom:-4px}
+.topic table.data{min-width:0}
+.topic .note{margin-top:10px;font-size:12.5px}
+.topic.wide ol{margin-bottom:12px}
+.topic.wide li{break-inside:avoid}
+@media (min-width:780px){.topic.wide ol{columns:2;column-gap:34px}}
 code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12.5px;background:var(--field-ro);padding:1px 5px;border-radius:4px}
 .tbl-scroll{overflow-x:auto;margin:0 -22px;padding:0 22px}
 table.data{border-collapse:collapse;width:100%;font-size:12.5px;min-width:440px}
-table.data th,table.data td{text-align:left;padding:7px 12px 7px 0;border-bottom:1px solid var(--line);white-space:nowrap}
+table.data th,table.data td{text-align:left;padding:7px 14px 7px 0;border-bottom:1px solid var(--line);white-space:nowrap}
+table.data td:last-child{white-space:normal;color:var(--faint)}
 table.data th{font-weight:600;color:var(--ink);font-size:11.5px;letter-spacing:.3px;text-transform:uppercase}
 table.data td{color:var(--dim)}
 table.data td:first-child{color:var(--ink)}
@@ -193,7 +205,7 @@ details.method[open]>summary::after{content:"–"}
 .method-body p:last-child{margin-bottom:0}
 footer{border-top:1px solid var(--line);color:var(--faint);font-size:12.5px;padding:18px 0 28px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
 
-/* ---------- smale skjermer ---------- */
+/* ---------- narrow screens ---------- */
 @media (max-width:620px){
   .wrap{padding:0 14px}
   .sect{padding:17px 16px}
@@ -206,6 +218,7 @@ footer{border-top:1px solid var(--line);color:var(--faint);font-size:12.5px;padd
   details.method>summary{padding:14px 16px}
   .method-body{padding:0 16px 18px}
   .dims-head,.dim{grid-template-columns:minmax(68px,1.15fr) minmax(52px,.9fr) 46px 46px 26px;gap:5px}
+  body.simple .dims-head,body.simple .dim{grid-template-columns:minmax(68px,1.15fr) minmax(52px,.9fr)}
   .dim input{height:34px;font-size:13px}
   .dim input.tol{padding:0 5px;font-size:12px}
   .lock{width:26px;height:32px}
@@ -218,6 +231,7 @@ footer{border-top:1px solid var(--line);color:var(--faint);font-size:12.5px;padd
   .metrics{grid-template-columns:1fr}
   .dims-head{display:none}
   .dim{grid-template-columns:1fr 48px 48px 26px;row-gap:3px;margin-bottom:12px}
+  body.simple .dim{grid-template-columns:1fr;row-gap:6px}
   .dim label{grid-column:1/-1;margin-bottom:0}
   .dim input.tol::placeholder{color:var(--faint)}
   .sect-h{flex-wrap:wrap}
@@ -236,24 +250,30 @@ footer{border-top:1px solid var(--line);color:var(--faint);font-size:12.5px;padd
 <body>
 <header class="top">
   <div class="wrap top-in">
-    <span class="logo"><i></i> O-ringkalkulator</span>
-    <span class="top-note">Alle mål i mm · regner lokalt i nettleseren</span>
+    <span class="logo"><i></i> O-ring calculator</span>
+    <div class="mode">
+      <span class="top-note">All dimensions in mm · calculated locally</span>
+      <div class="seg" role="group" aria-label="Level of detail">
+        <label><input type="radio" name="mode" value="simple" id="mode-simple" checked><span>Simple</span></label>
+        <label><input type="radio" name="mode" value="advanced" id="mode-advanced"><span>Advanced</span></label>
+      </div>
+    </div>
   </div>
 </header>
 
 <main class="wrap">
   <div class="hero">
-    <div class="kicker">Spordimensjonering</div>
-    <h1>Dimensjoner og kontroller <span style="white-space:nowrap">O-ringspor.</span></h1>
-    <p>Velg tetningstype og O-ring, legg inn husmålene, og se klem, sporfylling, strekk og ekstrusjonsgap
-       oppdatert direkte. Toleransene på både ring og spor regnes med.</p>
+    <div class="kicker">Groove sizing</div>
+    <h1>Size and check <span style="white-space:nowrap">O-ring grooves.</span></h1>
+    <p>Pick a seal type and an O-ring, enter the housing dimensions, and see squeeze, gland fill, stretch
+       and extrusion gap update as you type. Tolerances on both the ring and the groove are included.</p>
   </div>
 
   <div class="grid">
-    <!-- ============ INNDATA ============ -->
+    <!-- ============ INPUT ============ -->
     <form class="card" id="form" novalidate>
       <section class="sect">
-        <div class="sect-h"><b>01</b><h2>Tetningstype</h2></div>
+        <div class="sect-h"><b>01</b><h2>Seal configuration</h2></div>
         <div class="types">
           <button type="button" class="type" data-seal="piston" aria-pressed="true">
             <svg viewBox="0 0 64 34" fill="none" aria-hidden="true">
@@ -261,104 +281,121 @@ footer{border-top:1px solid var(--line);color:var(--faint);font-size:12.5px;padd
               <rect x="2" y="26" width="60" height="6" rx="1" fill="currentColor" opacity=".18"/>
               <path d="M10 9h44v6H42v4h12v6H10z" fill="currentColor" opacity=".3"/>
               <circle cx="36" cy="17" r="4.6" fill="none" stroke="currentColor" stroke-width="2"/>
-            </svg>Stempel</button>
+            </svg>Piston</button>
           <button type="button" class="type" data-seal="rod" aria-pressed="false">
             <svg viewBox="0 0 64 34" fill="none" aria-hidden="true">
               <path d="M2 2h60v9H44v4h18v9H2z" fill="currentColor" opacity=".18"/>
               <rect x="2" y="26" width="60" height="6" rx="1" fill="currentColor" opacity=".3"/>
               <rect x="2" y="19" width="60" height="7" fill="currentColor" opacity=".3"/>
               <circle cx="50" cy="15" r="4.6" fill="none" stroke="currentColor" stroke-width="2"/>
-            </svg>Stang</button>
+            </svg>Rod</button>
           <button type="button" class="type" data-seal="axial" aria-pressed="false">
             <svg viewBox="0 0 64 34" fill="none" aria-hidden="true">
               <rect x="2" y="3" width="60" height="9" rx="1" fill="currentColor" opacity=".18"/>
               <path d="M2 22h22v-6h16v6h22v9H2z" fill="currentColor" opacity=".3"/>
               <circle cx="32" cy="17" r="4.6" fill="none" stroke="currentColor" stroke-width="2"/>
-            </svg>Aksialt</button>
+            </svg>Axial</button>
         </div>
         <div class="row-between">
-          <span style="font-size:12.5px;color:var(--dim)">Bruksmåte</span>
+          <span style="font-size:12.5px;color:var(--dim)">Application type</span>
           <div class="seg">
-            <label><input type="radio" name="app" value="static" checked><span>Statisk</span></label>
-            <label><input type="radio" name="app" value="dynamic" id="dynamic"><span>Dynamisk</span></label>
+            <label><input type="radio" name="app" value="static" checked><span>Static</span></label>
+            <label><input type="radio" name="app" value="dynamic" id="dynamic"><span>Dynamic</span></label>
           </div>
         </div>
         <p class="note" id="seal-note"></p>
         <div id="dir-wrap" hidden style="margin-top:14px">
-          <label for="dir">Trykkretning</label>
+          <label for="dir">Pressure direction</label>
           <select id="dir">
-            <option value="internal">Innenfra · ringen presses mot ytre sporvegg</option>
-            <option value="external">Utenfra · ringen presses mot indre sporvegg</option>
+            <option value="internal">From inside · ring pushed against the outer groove wall</option>
+            <option value="external">From outside · ring pushed against the inner groove wall</option>
           </select>
         </div>
       </section>
 
       <section class="sect">
-        <div class="sect-h"><b>02</b><h2>O-ring</h2></div>
-        <label class="check"><input type="checkbox" id="std" checked> Velg standardstørrelse (AS568 / ISO 3601-1 A)</label>
+        <div class="sect-h"><b>02</b><h2>O-ring specification</h2></div>
+        <label class="check"><input type="checkbox" id="std" checked> Use standard size (AS568 / ISO 3601-1 A)</label>
         <div class="fields" id="std-fields">
-          <div><label for="cs-sel">Snortykkelse · b</label><select id="cs-sel"></select></div>
-          <div><label for="id-sel">Innvendig diameter · a</label><select id="id-sel"></select></div>
+          <div><label for="cs-sel">Cross section · b</label><select id="cs-sel"></select></div>
+          <div><label for="id-sel">Inside diameter · a</label><select id="id-sel"></select></div>
         </div>
         <div class="fields" id="custom-fields" hidden>
-          <div><label for="r-id">Innvendig diameter · a</label><div class="unit"><input id="r-id" type="text" inputmode="decimal" data-num data-min="0.1" data-max="2000" data-label="Innvendig diameter"><span>mm</span></div></div>
-          <div><label for="r-cs">Snortykkelse · b</label><div class="unit"><input id="r-cs" type="text" inputmode="decimal" data-num data-min="0.3" data-max="30" data-label="Snortykkelse"><span>mm</span></div></div>
+          <div><label for="r-id">Inside diameter · a</label><div class="unit"><input id="r-id" type="text" inputmode="decimal" data-num data-min="0.1" data-max="2000" data-label="Inside diameter"><span>mm</span></div></div>
+          <div><label for="r-cs">Cross section · b</label><div class="unit"><input id="r-cs" type="text" inputmode="decimal" data-num data-min="0.3" data-max="30" data-label="Cross section"><span>mm</span></div></div>
         </div>
-        <div class="fields" style="margin-top:13px">
-          <div><label for="r-id-tol">Toleranse a · ±</label><div class="unit"><input id="r-id-tol" type="text" inputmode="decimal" data-num data-min="0" data-max="10" data-label="Toleranse innvendig diameter"><span>mm</span></div></div>
-          <div><label for="r-cs-tol">Toleranse b · ±</label><div class="unit"><input id="r-cs-tol" type="text" inputmode="decimal" data-num data-min="0" data-max="5" data-label="Toleranse snortykkelse"><span>mm</span></div></div>
+        <div class="fields adv" style="margin-top:13px">
+          <div><label for="r-id-tol">Tolerance a · ±</label><div class="unit"><input id="r-id-tol" type="text" inputmode="decimal" data-num data-min="0" data-max="10" data-label="Inside diameter tolerance"><span>mm</span></div></div>
+          <div><label for="r-cs-tol">Tolerance b · ±</label><div class="unit"><input id="r-cs-tol" type="text" inputmode="decimal" data-num data-min="0" data-max="5" data-label="Cross section tolerance"><span>mm</span></div></div>
         </div>
         <p class="note" id="ring-note"></p>
       </section>
 
       <section class="sect">
-        <div class="sect-h"><b>03</b><h2>Hus og spor</h2><span class="spacer"></span>
-          <button type="button" class="btn soft" id="suggest">Foreslå spormål</button></div>
-        <div class="dims-head"><span>Mål</span><span>Nominelt</span><span>+</span><span>−</span><span></span></div>
+        <div class="sect-h"><b>03</b><h2>Housing and groove</h2><span class="spacer"></span>
+          <button type="button" class="btn soft" id="suggest">Suggest dimensions</button></div>
+        <div class="dims-head"><span>Dimension</span><span>Nominal</span><span class="adv">+</span><span class="adv">−</span><span class="adv"></span></div>
         <div id="dims"></div>
         <p class="note" id="dims-note"></p>
+        <p class="mode-note">Tolerances are kept at their defaults in simple mode. Switch to <b>Advanced</b> at the top to edit them and to lock individual dimensions.</p>
         <p class="msg" id="msg" role="status" hidden></p>
       </section>
 
       <section class="sect">
-        <div class="sect-h"><b>04</b><h2>Drift og materiale</h2></div>
+        <div class="sect-h"><b>04</b><h2>Operating environment and material</h2></div>
         <div class="fields">
-          <div><label for="press">Trykk</label><div class="unit"><input id="press" type="text" inputmode="decimal" value="10" data-num data-min="0" data-max="1000" data-label="Trykk"><span>MPa</span></div></div>
-          <div><label for="temp">Driftstemperatur</label><div class="unit"><input id="temp" type="text" inputmode="decimal" value="20" data-num data-min="-100" data-max="350" data-label="Driftstemperatur"><span>°C</span></div></div>
-          <div><label for="mat">Materiale</label><select id="mat"></select></div>
-          <div><label for="hard">Hardhet</label><select id="hard"><option>70</option><option>75</option><option>80</option><option>90</option></select></div>
-          <div><label for="swell">Kjemisk volumendring</label><div class="unit"><input id="swell" type="text" inputmode="decimal" value="0" data-num data-min="-20" data-max="100" data-label="Kjemisk volumendring"><span>%</span></div></div>
-          <div><label for="metal">Hus og motpart</label><select id="metal">
-            <option value="12">Stål · 12 µm/(m·K)</option>
-            <option value="17">Rustfritt · 17 µm/(m·K)</option>
-            <option value="23">Aluminium · 23 µm/(m·K)</option>
+          <div><label for="press">Pressure</label><div class="unit"><input id="press" type="text" inputmode="decimal" value="10" data-num data-min="0" data-max="1000" data-label="Pressure"><span>MPa</span></div></div>
+          <div><label for="temp">Operating temperature</label><div class="unit"><input id="temp" type="text" inputmode="decimal" value="20" data-num data-min="-100" data-max="350" data-label="Operating temperature"><span>°C</span></div></div>
+          <div><label for="mat">Material</label><select id="mat"></select></div>
+          <div class="adv"><label for="hard">Hardness</label><select id="hard"><option>70</option><option>75</option><option>80</option><option>90</option></select></div>
+          <div><label for="swell">Chemical volume swell</label><div class="unit"><input id="swell" type="text" inputmode="decimal" value="0" data-num data-min="-20" data-max="100" data-label="Chemical volume swell"><span>%</span></div></div>
+          <div class="adv"><label for="metal">Housing and mating part</label><select id="metal">
+            <optgroup label="Metals">
+              <option value="11">Cast iron · 11 µm/(m·K)</option>
+              <option value="12">Steel · 12 µm/(m·K)</option>
+              <option value="17">Stainless · 17 µm/(m·K)</option>
+              <option value="19">Brass / bronze · 19 µm/(m·K)</option>
+              <option value="23">Aluminium · 23 µm/(m·K)</option>
+            </optgroup>
+            <optgroup label="Plastics">
+              <option value="47">PEEK · 47 µm/(m·K)</option>
+              <option value="68">Polycarbonate, PC · 68 µm/(m·K)</option>
+              <option value="75">Acrylic, PMMA · 75 µm/(m·K)</option>
+              <option value="80">Other plastic · 80 µm/(m·K)</option>
+              <option value="85">ABS · 85 µm/(m·K)</option>
+              <option value="90">Nylon, PA · 90 µm/(m·K)</option>
+              <option value="110">Acetal, POM · 110 µm/(m·K)</option>
+              <option value="120">PTFE · 120 µm/(m·K)</option>
+              <option value="140">Polypropylene, PP · 140 µm/(m·K)</option>
+            </optgroup>
           </select></div>
-          <div><label for="target">Ønsket klem</label><div class="unit"><input id="target" type="text" inputmode="decimal" value="22" data-num data-min="5" data-max="40" data-label="Ønsket klem"><span>%</span></div></div>
-          <div><label for="clear">Diametral klaring</label><div class="unit"><input id="clear" type="text" inputmode="decimal" value="0.08" data-num data-min="0" data-max="3" data-label="Diametral klaring"><span>mm</span></div></div>
+          <div class="adv"><label for="target">Target squeeze</label><div class="unit"><input id="target" type="text" inputmode="decimal" value="22" data-num data-min="5" data-max="40" data-label="Target squeeze"><span>%</span></div></div>
+          <div class="adv"><label for="clear">Diametral clearance</label><div class="unit"><input id="clear" type="text" inputmode="decimal" value="0.08" data-num data-min="0" data-max="3" data-label="Diametral clearance"><span>mm</span></div></div>
         </div>
-        <p class="note" id="mat-note"></p>
-        <div class="actions"><button type="button" class="btn" id="reset">Tilbakestill eksempel</button></div>
+        <p class="note adv" id="mat-note">A plastic housing expands five to ten times more than steel, so squeeze and gland fill move much further with temperature. Glass-filled grades expand markedly less than the unfilled values listed here – use the supplier's figure when it matters.</p>
+        <p class="mode-note">Simple mode assumes 70 Shore A in a steel housing, a 22 % target squeeze (15 % dynamic) and 0.08 mm diametral clearance. Switch to <b>Advanced</b> to change them.</p>
+        <div class="actions"><button type="button" class="btn" id="reset">Reset example</button></div>
       </section>
     </form>
 
-    <!-- ============ RESULTAT ============ -->
+    <!-- ============ RESULT ============ -->
     <div class="res">
       <section class="card">
-        <div class="res-top"><h2>Resultat</h2><span class="pill" id="verdict"></span></div>
+        <div class="res-top"><h2>Result</h2><span class="pill" id="verdict"></span></div>
         <figure class="figure" style="margin:0">
-          <figcaption>Snitt gjennom spor og ring · i skala</figcaption>
-          <svg id="fig" viewBox="0 0 480 208" role="img" aria-label="Skjematisk snitt av O-ring i spor"></svg>
+          <figcaption>Diametral section</figcaption>
+          <svg id="fig" viewBox="0 0 480 208" role="img" aria-label="Schematic section of an O-ring in its groove"></svg>
         </figure>
         <div class="empty" id="res-error" hidden></div>
         <div class="res-body" id="res-body">
           <div class="ring-name" id="ring-name"></div>
           <div class="ring-sub" id="ring-sub"></div>
           <div class="metrics" id="metrics"></div>
-          <table class="res-tab"><caption class="sr-only">Spormål og beregnede verdier</caption><tbody id="res-tab"></tbody></table>
+          <table class="res-tab"><caption class="sr-only">Groove dimensions and calculated values</caption><tbody id="res-tab"></tbody></table>
           <div class="checks" id="checks"></div>
           <div class="actions">
-            <button type="button" class="btn" id="copy">Kopier oppsummering</button>
-            <button type="button" class="btn" id="print">Skriv ut</button>
+            <button type="button" class="btn" id="copy">Copy summary</button>
+            <button type="button" class="btn" id="print">Print</button>
           </div>
           <p class="msg" id="copy-msg" role="status" hidden></p>
         </div>
@@ -366,255 +403,225 @@ footer{border-top:1px solid var(--line);color:var(--faint);font-size:12.5px;padd
     </div>
   </div>
 
-  <!-- ============ FORKLARING ============ -->
+  <!-- ============ EXPLANATION ============ -->
   <section class="explain">
     <div class="explain-head">
-      <div class="kicker">Bakgrunn</div>
-      <h2>Hva som er viktig, og hvorfor</h2>
-      <p>En O-ring tetter ikke fordi den ligger i et spor. Den tetter fordi den er klemt sammen,
-         og fordi den har et sted å gjøre av seg når den varmes opp. Her er størrelsene som avgjør
-         om tetningen holder, og hva som skjer når de er feil.</p>
+      <div class="kicker">Background</div>
+      <h2>What matters, and why</h2>
+      <p>An O-ring seals because it is squeezed, and because it has somewhere to go when it heats up.
+         These are the numbers that decide whether it holds.</p>
     </div>
 
     <div class="topics">
 
-      <article class="topic">
-        <p class="lead">Klem · squeeze</p>
-        <h3>Det er klemmen som tetter</h3>
-        <div class="rule"><b>15–30 %</b><span>statisk &nbsp;·&nbsp; <b>10–20 %</b> dynamisk &nbsp;·&nbsp; minst <b>0,1 mm</b> absolutt</span></div>
-        <p>En O-ring monteres med overmål og presses flat mellom bunnen av sporet og tetteflaten.
-           Gummien ligger da med et <strong>kontakttrykk</strong> mot begge flatene. Så lenge dette
-           kontakttrykket er høyere enn mediets trykk, kommer ikke mediet forbi.</p>
-        <p>Trykket hjelper til: det skyver ringen mot lavtrykkssiden og øker kontakttrykket
-           ytterligere. Derfor er det ved <strong>lavt eller null trykk</strong> at en tetning med
-           for lite klem lekker først, ikke ved maksimalt trykk.</p>
-        <ul>
-          <li><strong>For lite klem</strong> gir lekkasje ved oppstart, ved kulde og etter at gummien har satt seg.</li>
-          <li><strong>For mye klem</strong> gir høy friksjon, varmeutvikling, raskere aldring og permanent deformasjon. Over ca. 30 % faller levetiden merkbart.</li>
-        </ul>
-        <p>Prosent alene er ikke nok. På tynne snorer blir 15 % svært lite i millimeter, og
-           ujevnheter, ovalitet og overflateruhet spiser opp klemmen. Derfor kontrolleres også den
-           absolutte klemmen i mm.</p>
-      </article>
-
-      <article class="topic">
-        <p class="lead">Sporfylling · gland fill</p>
-        <h3>Gummi lar seg ikke presse sammen</h3>
-        <div class="rule"><b>Maks 85 %</b><span>av sporets tverrsnitt, i verste toleransetilfelle</span></div>
-        <p>Gummi er nesten <strong>inkompressibel</strong>. Den har omtrent samme kompressibilitet som
-           vann: den lar seg forme, men ikke presse sammen. Når ringen klemmes flat, må volumet
-           flytte seg sidelengs i sporet. Sporet må derfor være bredere enn ringen er tykk.</p>
-        <p>Fyller ringen hele sporet, oppstår <strong>hydraulisk lås</strong>. Videre oppvarming eller
-           svelling har ingen steder å gå, og trykket i sporet stiger raskt til flere hundre bar.
-           Resultatet er ekstrudert gummi, sprengte spor eller flenser som løftes fra hverandre.</p>
-        <p>Marginen på 15 % er ikke slingringsmonn, den er reservert:</p>
-        <ul>
-          <li><strong>Varmeutvidelse.</strong> Gummi utvider seg 9–20 ganger mer enn stål. 100 °C gir 3–8 % volumøkning, avhengig av blanding.</li>
-          <li><strong>Kjemisk svelling</strong> i mediet, ofte 2–10 %.</li>
-          <li><strong>Toleranser</strong> på både snortykkelse og spor.</li>
-        </ul>
-        <p>Er sporet derimot altfor romslig, under ca. 50 % fylling, kan ringen rulle og vri seg.
-           Ved frem- og tilbakegående bevegelse er det en kjent årsak til spiralbrudd.</p>
-      </article>
-
-      <article class="topic">
-        <p class="lead">Strekk og kompresjon</p>
-        <h3>Strekk stjeler klem</h3>
-        <div class="rule"><b>Maks 5 %</b><span>strekk på innvendig diameter &nbsp;·&nbsp; <b>maks 3 %</b> kompresjon av ytre diameter</span></div>
-        <p>Strekker du en O-ring rundt et stempel, blir den <strong>tynnere</strong>. Volumet er
-           konstant, så det som blir lengre må bli smalere. 5 % strekk reduserer snortykkelsen med
-           omtrent 2 %, og den klemmen forsvinner fra regnestykket.</p>
-        <p>Denne kalkulatoren regner ut den faktiske snortykkelsen etter montering ved å bevare
-           ringens volum, og bruker den i klemberegningen. Derfor blir klemmen litt lavere enn
-           en enkel <code>(b − h) / b</code> ville gitt.</p>
-        <p>Strekk gir også <strong>permanent strekkspenning</strong> i gummien hele levetiden.
-           Det akselererer aldring og ozonsprekker, særlig i NBR.</p>
-        <p>Motsatt vei, ved stangtetninger, presses ringen sammen på utsiden for å bli liggende i
-           sporet. Presses den for mye, <strong>bukler</strong> den og legger seg i bølger, og da
-           lekker den langs bølgedalene.</p>
-      </article>
-
-      <article class="topic">
-        <p class="lead">Ekstrusjonsgap</p>
-        <h3>Spalten ringen skal presses inn i</h3>
-        <div class="rule"><b>Gap × trykk</b><span>er den kritiske kombinasjonen, ikke gapet alene</span></div>
-        <p>Mellom stempel og sylinder, eller mellom stang og hus, er det alltid en klaring.
-           Under trykk presses gummien inn i denne spalten. Klarer den ikke å holde igjen, blir
-           ringen <strong>nappet i stykker</strong> i kanten, litt for hver trykksyklus.</p>
-        <p>Hvor mye som tåles avhenger av fire ting:</p>
-        <ul>
-          <li><strong>Trykket.</strong> Tålt gap faller omtrent omvendt proporsjonalt med trykket.</li>
-          <li><strong>Hardheten.</strong> 90 Shore A tåler flere ganger større gap enn 70 Shore A.</li>
-          <li><strong>Temperaturen.</strong> Varm gummi er mykere og ekstruderer lettere.</li>
-          <li><strong>Eksentrisitet.</strong> Klaringen samler seg på én side. Regn alltid med hele den diametrale klaringen på verste sted.</li>
-        </ul>
-        <p>Blir gapet for stort, er rekkefølgen på tiltak: strammere pasning, hardere blanding,
-           og til slutt <strong>støttering</strong> på lavtrykkssiden. Støttering krever bredere spor.</p>
-      </article>
-
-      <article class="topic">
-        <p class="lead">Temperatur</p>
-        <h3>Kulde lekker, varme sliter</h3>
-        <p>Ved <strong>lav temperatur</strong> trekker gummien seg sammen og blir stivere. Både
-           klemmen og evnen til å følge etter ujevnheter forsvinner. Nedre brukstemperatur ligger
-           typisk 8–15 °C over glassovergangen, og ved raske trykkfall kan tetningen lekke lenge før
-           gummien er teknisk «frossen».</p>
-        <p>Ved <strong>høy temperatur</strong> går det motsatt vei. Gummien utvider seg mer enn
-           metallet rundt, klemmen og sporfyllingen øker, og materialet eldes raskere. Tommelfingerregelen
-           er at hver 10 °C omtrent halverer levetiden.</p>
+      <article class="topic wide">
+        <p class="lead">At a glance</p>
+        <h3>The limits this tool checks</h3>
         <div class="tbl-scroll">
           <table class="data">
-            <thead><tr><th>Materiale</th><th>Område</th><th>Typisk bruk</th></tr></thead>
+            <thead><tr><th>Check</th><th>Static</th><th>Dynamic</th><th>Why</th></tr></thead>
             <tbody>
-              <tr><td>NBR</td><td>−30 … +100 °C</td><td>Mineralolje, hydraulikk, luft</td></tr>
-              <tr><td>HNBR</td><td>−30 … +150 °C</td><td>Som NBR, høyere varme og slitasje</td></tr>
-              <tr><td>FKM</td><td>−20 … +200 °C</td><td>Varm olje, drivstoff, kjemikalier</td></tr>
-              <tr><td>EPDM</td><td>−45 … +150 °C</td><td>Vann, damp, bremsevæske. Ikke mineralolje</td></tr>
-              <tr><td>VMQ</td><td>−55 … +200 °C</td><td>Statisk, stort temperaturspenn. Svak mekanisk</td></tr>
-              <tr><td>FFKM</td><td>−15 … +300 °C</td><td>Aggressiv kjemi, halvleder. Kostbart</td></tr>
+              <tr><td>Squeeze</td><td>15–30 %</td><td>10–20 %</td><td>Contact pressure is what seals</td></tr>
+              <tr><td>Absolute squeeze</td><td>≥ 0.13 mm</td><td>≥ 0.10 mm</td><td>Roughness and ovality eat the rest</td></tr>
+              <tr><td>Gland fill</td><td colspan="2">≤ 85 %</td><td>Leaves room for heat and swell</td></tr>
+              <tr><td>Stretch, ring ID</td><td colspan="2">≤ 5 %</td><td>Stretch thins the cross section</td></tr>
+              <tr><td>Compression, ring OD</td><td colspan="2">≤ 3 %</td><td>More and the ring buckles</td></tr>
+              <tr><td>Extrusion gap</td><td colspan="2">falls with pressure, max 0.40 mm</td><td>Gap × pressure nibbles the ring apart</td></tr>
+              <tr><td>Sealing face, Ra</td><td>0.8–1.6 µm</td><td>0.1–0.4 µm</td><td>Too rough leaks, too smooth wears</td></tr>
             </tbody>
           </table>
         </div>
-        <p class="note">Veiledende for vanlige blandinger. Den konkrete blandingen og mediet avgjør,
-           og kombinasjonen medium + temperatur + trykk må kontrolleres hos leverandøren.</p>
       </article>
 
       <article class="topic">
-        <p class="lead">Kompresjonssett</p>
-        <h3>Ringen får aldri formen tilbake</h3>
-        <p>Holdes gummi sammenpresset over tid, kommer den ikke helt tilbake. Andelen som blir
-           borte kalles <strong>kompresjonssett</strong>, og den vokser med temperatur og tid.
-           Et sett på 50 % betyr at halve den opprinnelige klemmen er tapt.</p>
-        <p>Det er den viktigste grunnen til at tetninger lekker etter måneder i drift og ikke
-           ved idriftsettelse. Praktisk konsekvens: legg klemmen i <strong>øvre halvdel</strong> av
-           det anbefalte området når tetningen skal stå varmt og lenge, og velg en blanding med lav
-           settverdi framfor å øke klemmen ytterligere.</p>
-        <p>Trykk hjelper: en O-ring med lite gjenværende klem kan fortsatt tette under trykk,
-           men lekker ved avlastning og i kulde. Derfor er det ved <strong>oppstart etter stillstand</strong>
-           problemet viser seg.</p>
-      </article>
-
-      <article class="topic">
-        <p class="lead">Overflate og montering</p>
-        <h3>Sporet ødelegger flere ringer enn beregningen</h3>
+        <p class="lead">Squeeze</p>
+        <h3>It is the squeeze that seals</h3>
+        <p>The ring is fitted oversized and pressed flat between groove bottom and sealing face. While its
+           <strong>contact pressure</strong> exceeds the pressure of the medium, nothing gets past.</p>
         <ul>
-          <li><strong>Ruhet på tetteflaten.</strong> Dynamisk 0,1–0,4 µm Ra, statisk opp til 0,8–1,6 µm Ra.
-              Bunnen og sidene av sporet tåler 1,6–3,2 µm Ra.</li>
-          <li><strong>For blank flate er også galt</strong> ved bevegelse. Under ca. 0,05 µm Ra holder ikke
-              smørefilmen seg, og friksjonen øker.</li>
-          <li><strong>Sporhjørner</strong> avrundes med 0,1–0,3 mm. Skarpe hjørner kutter ringen ved trykkstøt.</li>
-          <li><strong>Sporsider</strong> lages loddrette eller med inntil 5° helning. Brattere spor slipper ringen.</li>
-          <li><strong>Innføringsfas</strong> 15–20° på alt ringen skal tres over, og fjern gjenger, kanter og
-              tverrhull i monteringsbanen eller dekk dem til.</li>
-          <li><strong>Smør ved montering</strong> med et medium ringen tåler. Tørrmontering river opp overflaten.</li>
+          <li>Pressure adds to the contact pressure, so a slack seal leaks at <strong>low</strong> pressure, not at maximum.</li>
+          <li><strong>Too little:</strong> leaks at start-up, in the cold, and once the rubber has taken a set.</li>
+          <li><strong>Too much:</strong> friction, heat, faster ageing. Above ~30 % the life drops noticeably.</li>
+          <li>On thin cross sections 15 % is very little in mm, so the absolute squeeze is checked too.</li>
         </ul>
-        <p>Én ripe på tvers av tetteflaten er nok. Ringen kan ikke fylle et spor som er dypere
-           enn den elastiske deformasjonen rekker.</p>
       </article>
 
       <article class="topic">
-        <p class="lead">Statisk og dynamisk</p>
-        <h3>Bevegelse endrer alle kravene</h3>
-        <p>En <strong>statisk</strong> tetning er en pakning. Her er målet maksimal sikkerhet mot
-           lekkasje, og høy klem koster lite.</p>
-        <p>En <strong>dynamisk</strong> tetning må i tillegg gli. Klemmen holdes lavere, 10–20 %,
-           fordi friksjonen, varmen og slitasjen vokser raskt med klemmen. Aktuelle feilmåter:</p>
+        <p class="lead">Gland fill</p>
+        <h3>Rubber cannot be compressed</h3>
+        <p>Rubber can be shaped, not squashed. Pressed flat, its volume moves sideways, so the groove must be
+           wider than the ring is thick. Fill the groove completely and you get <strong>hydraulic lock</strong>:
+           several hundred bar in the groove, extruded rubber, burst grooves, flanges lifted apart.</p>
+        <p>The 15 % margin is not slack. It is reserved for:</p>
         <ul>
-          <li><strong>Spiralbrudd.</strong> Ringen ruller i stedet for å gli, og vris i stykker. Skjer ved
-              lang slaglengde, lav hastighet og for bredt spor. Snorer tykkere enn 3 mm er mest utsatt.</li>
-          <li><strong>Stick-slip.</strong> Rykkvis bevegelse ved lav hastighet, fordi friksjonen faller når
-              bevegelsen først starter.</li>
-          <li><strong>Tørrkjøring</strong> ved oppstart etter stillstand, når smørefilmen er presset bort.</li>
+          <li><strong>Heat.</strong> Rubber expands 9–20× more than steel: 3–8 % by volume per 100 °C.</li>
+          <li><strong>Chemical swell</strong> in the medium, often 2–10 %.</li>
+          <li><strong>Tolerances</strong> on cross section and groove.</li>
         </ul>
-        <p>Til <strong>roterende</strong> bevegelse gjelder egne regler. Gummien varmes opp og utvider seg
-           mot akselen, noe som øker friksjonen ytterligere, og dette verktøyet dekker ikke det tilfellet.</p>
+        <p>Below ~50 % fill the groove is so roomy the ring can roll — a known cause of spiral failure.</p>
       </article>
 
       <article class="topic">
-        <p class="lead">Toleranser</p>
-        <h3>Det er ytterpunktene som lekker</h3>
-        <p>Et spor som er perfekt på nominelle mål kan være ubrukelig i produksjon. Derfor regnes
-           alle kombinasjoner av øvre og nedre grense for ring og spor, både ved montering og i drift.
-           Verdien du skal se på er <strong>intervallet</strong>, ikke det nominelle tallet.</p>
-        <p>Ringens egne toleranser er ofte den største bidragsyteren, og de er relativt sett
-           <strong>størst på små ringer</strong>. En ring på 3,7 mm innvendig diameter har etter AS568 en
-           toleranse på ±0,13 mm, altså ±3,5 %. Samme toleranse på en ring på 100 mm er ±0,3 %.</p>
-        <p>Praktisk følge: på små ringer kan strekk og klem havne utenfor anbefalt område bare på
-           grunn av ringtoleransen, uansett hvor nøyaktig sporet lages. Da må du enten stramme inn
-           kravet til ringen, velge en større snortykkelse, eller akseptere et bredere vindu bevisst.</p>
+        <p class="lead">Stretch</p>
+        <h3>Stretch steals squeeze</h3>
+        <p>Volume is constant, so what gets longer gets thinner: 5 % stretch takes about 2 % off the cross
+           section. This tool conserves the ring volume and uses the fitted cross section, so squeeze reads
+           slightly lower than a plain <code>(b − h) / b</code> would give.</p>
+        <p>Stretch also leaves a <strong>permanent tensile strain</strong>, which accelerates ageing and ozone
+           cracking, NBR especially. On rod seals the ring is compressed on the outside instead — too much and
+           it <strong>buckles</strong> into waves and leaks along them.</p>
       </article>
 
       <article class="topic">
-        <p class="lead">Rekkefølge</p>
-        <h3>Slik henger valgene sammen</h3>
+        <p class="lead">Extrusion gap</p>
+        <h3>The gap the ring gets pushed into</h3>
+        <p>Under pressure the rubber is forced into the clearance and nibbled apart at the edge, a little
+           every cycle. <strong>Gap × pressure</strong> is what matters, not the gap alone.</p>
+        <ul>
+          <li>Allowable gap falls roughly in inverse proportion to <strong>pressure</strong>.</li>
+          <li>90 Shore A takes several times the gap that 70 Shore A does.</li>
+          <li>Hot rubber is softer and extrudes more easily.</li>
+          <li><strong>Eccentricity</strong> puts the whole clearance on one side — always use the full diametral value.</li>
+        </ul>
+        <p>Remedies, in order: tighter fit, harder compound, then a <strong>back-up ring</strong> on the
+           low-pressure side. A back-up ring needs a wider groove.</p>
+      </article>
+
+      <article class="topic">
+        <p class="lead">Temperature</p>
+        <h3>Cold leaks, heat wears</h3>
+        <p><strong>Cold:</strong> the rubber contracts and stiffens, losing both squeeze and the ability to follow
+           surface irregularities. The usable limit sits 8–15 °C above the glass transition.
+           <strong>Hot:</strong> it grows faster than the metal around it, squeeze and gland fill rise, and every
+           10 °C roughly halves the service life.</p>
+        <div class="tbl-scroll">
+          <table class="data">
+            <thead><tr><th>Material</th><th>Range</th><th>Typical use</th></tr></thead>
+            <tbody>
+              <tr><td>NBR</td><td>−30 … +100 °C</td><td>Mineral oil, hydraulics, air</td></tr>
+              <tr><td>HNBR</td><td>−30 … +150 °C</td><td>Like NBR, more heat and wear</td></tr>
+              <tr><td>FKM</td><td>−20 … +200 °C</td><td>Hot oil, fuel, chemicals</td></tr>
+              <tr><td>EPDM</td><td>−45 … +150 °C</td><td>Water, steam, brake fluid. Not mineral oil</td></tr>
+              <tr><td>VMQ</td><td>−55 … +200 °C</td><td>Static, wide range. Mechanically weak</td></tr>
+              <tr><td>FFKM</td><td>−15 … +300 °C</td><td>Aggressive chemistry. Expensive</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="note">Indicative for common compounds. Confirm medium + temperature + pressure with the supplier.</p>
+      </article>
+
+      <article class="topic">
+        <p class="lead">Compression set</p>
+        <h3>The ring never gets its shape back</h3>
+        <p>Rubber held compressed never fully recovers. The lost fraction, the <strong>compression set</strong>,
+           grows with temperature and time: 50 % set means half the original squeeze is gone. That is why seals
+           leak after months in service rather than at commissioning, and why it shows at <strong>start-up after
+           a standstill</strong> — pressure still holds a tired seal, an unloaded cold joint does not.</p>
+        <p>For hot, long-life joints: squeeze in the <strong>upper half</strong> of the range, and a low-set
+           compound rather than more squeeze.</p>
+      </article>
+
+      <article class="topic">
+        <p class="lead">Surface and assembly</p>
+        <h3>The groove ruins more rings than the maths</h3>
+        <ul>
+          <li><strong>Sealing face:</strong> 0.1–0.4 µm Ra dynamic, up to 0.8–1.6 µm Ra static. Groove bottom and sides take 1.6–3.2 µm Ra.</li>
+          <li><strong>Below ~0.05 µm Ra</strong> the lubricant film will not stay put and friction rises.</li>
+          <li><strong>Groove corners</strong> radiused 0.1–0.3 mm; sharp corners cut the ring on pressure spikes.</li>
+          <li><strong>Groove sides</strong> vertical, up to 5° taper. Steeper lets the ring escape.</li>
+          <li><strong>Lead-in chamfer</strong> 15–20°; cover or remove threads, edges and cross holes in the assembly path.</li>
+          <li><strong>Lubricate on assembly</strong> with a medium the ring tolerates. Dry assembly tears the surface.</li>
+        </ul>
+        <p>One scratch across the sealing face is enough.</p>
+      </article>
+
+      <article class="topic">
+        <p class="lead">Static and dynamic</p>
+        <h3>Motion changes every requirement</h3>
+        <p>A <strong>static</strong> seal is a gasket: high squeeze costs little. A <strong>dynamic</strong>
+           seal has to slide too, so squeeze is held at 10–20 % — friction, heat and wear climb fast with it.
+           Failure modes to watch:</p>
+        <ul>
+          <li><strong>Spiral failure.</strong> The ring rolls instead of sliding and twists apart. Long stroke, low speed, wide groove, cross section over 3 mm.</li>
+          <li><strong>Stick-slip</strong> at low speed, as friction drops once motion starts.</li>
+          <li><strong>Dry running</strong> at start-up, when the film has been squeezed away.</li>
+        </ul>
+        <p><strong>Rotary</strong> motion follows separate rules and is not covered by this tool.</p>
+      </article>
+
+      <article class="topic">
+        <p class="lead">Tolerances</p>
+        <h3>It is the extremes that leak</h3>
+        <p>A groove that is perfect at nominal can be useless in production, so every combination of limits is
+           calculated, at assembly and in service. Read the <strong>range</strong>, not the nominal number.</p>
+        <p>The ring's own tolerance usually dominates, and it is relatively <strong>worst on small rings</strong>:
+           ±0.13 mm on a 3.7 mm ID is ±3.5 %, the same tolerance on a 100 mm ring only ±0.3 %. Squeeze and stretch
+           can then land outside the range on ring tolerance alone, however accurately the groove is machined.
+           Tighten the ring spec, go up a cross section, or accept the wider window deliberately.</p>
+      </article>
+
+      <article class="topic wide">
+        <p class="lead">Order of work</p>
+        <h3>How the choices hang together</h3>
         <ol style="margin:0 0 10px;padding-left:18px;font-size:13.5px;color:var(--dim)">
-          <li>Velg <strong>snortykkelse</strong> først. Tykkere snor tåler mer slitasje, større toleranser og
-              høyere sett, men krever mer plass og gir mer friksjon.</li>
-          <li>Velg <strong>diameter</strong> slik at strekket blir lite. Stempel: ringens innvendige diameter
-              like under sporbunnen. Stang: ringens ytterdiameter like over sporbunnen.</li>
-          <li>Sett <strong>spordybden</strong> fra ønsket klem.</li>
-          <li>Sett <strong>sporbredden</strong> fra sporfyllingen, med margin for varme og svelling.</li>
-          <li>Kontroller <strong>klaringen</strong> mot trykk og hardhet, og legg inn støttering om nødvendig.</li>
-          <li>Kontroller <strong>materialet</strong> mot medium, temperatur og trykk.</li>
+          <li><strong>Cross section</strong> first: thicker takes more wear, set and tolerance, but needs space and adds friction.</li>
+          <li><strong>Diameter</strong> so the stretch stays small. Piston: ring ID just under the groove root. Rod: ring OD just over it.</li>
+          <li><strong>Groove depth</strong> from the target squeeze.</li>
+          <li><strong>Groove width</strong> from the gland fill, with margin for heat and swell.</li>
+          <li><strong>Clearance</strong> against pressure and hardness; add a back-up ring if needed.</li>
+          <li><strong>Material</strong> against medium, temperature and pressure.</li>
         </ol>
-        <p>Knappen «Foreslå spormål» gjør punkt 3 til 5 for deg. Lås målene du allerede har låst i
-           konstruksjonen, så beholdes de.</p>
+        <p>“Suggest dimensions” does steps 3–5. In Advanced mode, lock what the design already fixes and it is kept.</p>
       </article>
 
     </div>
 
     <details class="method">
-      <summary>Forutsetninger, formler og kilder</summary>
+      <summary>Assumptions, formulas and sources</summary>
       <div class="method-body">
-        <p><strong>Betegnelser.</strong> <code>a</code> ringens innvendige diameter, <code>b</code> snortykkelse,
-           <code>c</code> boring eller sylinderdiameter, <code>d</code> stempel- eller stangdiameter,
-           <code>e</code> sporbunndiameter, <code>L</code> sporbredde. Aksialt er <code>c</code> og <code>d</code>
-           sporets indre og ytre diameter, <code>e</code> spordybden og <code>L</code> flensspalten.</p>
-        <p><strong>Sporhøyde.</strong> Stempel <code>h = (c − e)/2</code>, stang <code>h = (e − d)/2</code>,
-           aksialt <code>h = e</code>.</p>
-        <p><strong>Effektiv snortykkelse.</strong> Ringens volum <code>V = π²·b²·(a + b)/4</code> holdes konstant
-           ved montering. Den effektive snortykkelsen <code>b'</code> ved den aktuelle sporveggen løses av
-           <code>b'²·(D + b') = b²·(a + b)</code> ved innvendig tilpasning og <code>b'²·(D − b') = b²·(a + b)</code>
-           ved utvendig, der <code>D</code> er sporbunndiameteren ringen legger seg mot. Dette er en geometrisk
-           tilnærming til at strekk gjør snoren tynnere, ikke en materialmodell.</p>
-        <p><strong>Klem.</strong> <code>100 · (b' − h) / b'</code>. Absolutt klem <code>b' − h</code> kontrolleres mot
-           0,13 mm statisk og 0,10 mm dynamisk.</p>
-        <p><strong>Sporfylling.</strong> Ringvolum delt på sporets ringformede volum,
-           <code>π·(c² − e²)·L/4</code> for stempel, <code>π·(e² − d²)·L/4</code> for stang og
-           <code>π·(d² − c²)·e/4</code> aksialt. Volumformen tar med at ringen og sporet ligger på litt ulik
-           middeldiameter, noe en ren arealberegning ikke gjør.</p>
-        <p><strong>Strekk.</strong> Innvendig <code>100·(D/a − 1)</code>, utvendig som reduksjon av fri
-           ytterdiameter <code>100·(1 − D/(a + 2b))</code>.</p>
-        <p><strong>Toleranser.</strong> Alle 64 kombinasjoner av ytterpunkter for ring og de fire spormålene
-           regnes, både ved montering (20 °C, ingen svelling) og ved oppgitt drift. Viste intervaller er
-           ytterpunktene av dette.</p>
-        <p><strong>Temperatur og svelling.</strong> Lineær utvidelse med α = 112 / 120 / 162 / 160 / 250 / 150
-           µm/(m·K) for NBR / HNBR / FKM / EPDM / VMQ / FFKM, og 12 / 17 / 23 for stål / rustfritt / aluminium.
-           Kjemisk volumendring gir lengdefaktor <code>∛(1 + ΔV/100)</code>. Koeffisientene er omtrentlige og
-           varierer mellom blandinger.</p>
-        <p><strong>Ekstrusjonsgrense.</strong> Veiledende kurve <code>g = K / p^n</code> med
-           (K, n) = (2,06 · 1,00), (2,10 · 0,80) og (2,21 · 0,63) for 70, 80 og 90 Shore A, uten støttering,
-           begrenset oppad til 0,40 mm. Kurven er tilpasset formen på de klassiske ekstrusjonsdiagrammene og
-           er ment som en tidlig kontroll. <strong>Kontroller alltid mot leverandørens eget diagram</strong>,
-           som også tar hensyn til snortykkelse og temperatur.</p>
-        <p><strong>Vurderingsgrenser.</strong> Klem 15–30 % statisk og 10–20 % dynamisk, sporfylling maks 85 %,
-           strekk 0–5 % innvendig og 0–3 % utvendig. Dette er vanlige konstruksjonsanbefalinger, ikke krav fra
-           en standard. Leverandørens grenser kan avvike.</p>
-        <p><strong>Ikke modellert.</strong> Kompresjonssett over tid, friksjon, eksentrisitet, ovalitet,
-           overflateruhet, gassgjennomtrengning, deformasjon av huset under trykk, spiralbrudd og roterende
-           bevegelse. Beregningen er geometrisk, og er ingen samsvarskontroll mot ISO 3601-2.</p>
-        <p><strong>Dimensjonsdata.</strong> 349 AS568-størrelser med toleranser fra
+        <p><strong>Notation.</strong> <code>a</code> ring ID, <code>b</code> cross section, <code>c</code> bore,
+           <code>d</code> piston or rod diameter, <code>e</code> groove root diameter, <code>L</code> groove width.
+           An axial groove is given by its inner diameter <code>c</code>, radial width <code>L</code>, depth
+           <code>h</code> and the flange gap <code>s</code>; its outer diameter is <code>c + 2L</code>.</p>
+        <p><strong>Gland depth.</strong> Piston <code>h = (c − e)/2</code>, rod <code>h = (e − d)/2</code>; for an axial
+           groove it is the groove depth itself.</p>
+        <p><strong>Effective cross section.</strong> The ring volume <code>V = π²·b²·(a + b)/4</code> is held constant
+           during installation, so <code>b'</code> solves <code>b'²·(D ± b') = b²·(a + b)</code> at the groove root
+           diameter <code>D</code> the ring rests against (<code>+</code> inside fit, <code>−</code> outside fit).
+           A geometric approximation of stretch thinning the cross section, not a material model.</p>
+        <p><strong>Squeeze.</strong> <code>100 · (b' − h) / b'</code>, with <code>b' − h</code> checked against
+           0.13 mm static and 0.10 mm dynamic. <strong>Gland fill</strong> is the ring volume over the annular groove
+           volume — <code>π·(c² − e²)·L/4</code> piston, <code>π·(e² − d²)·L/4</code> rod,
+           <code>π·((c + 2L)² − c²)·h/4</code> axial — which, unlike a plain area ratio, accounts for ring and groove
+           sitting at different mean diameters.
+           <strong>Stretch</strong> is <code>100·(D/a − 1)</code> inside, and outside a reduction of the free OD,
+           <code>100·(1 − D/(a + 2b))</code>.</p>
+        <p><strong>Tolerances.</strong> All 64 combinations of extremes for the ring and the four groove dimensions,
+           at assembly (20 °C, no swell) and at the stated operating point. The ranges shown are the extremes of that.</p>
+        <p><strong>Temperature and swell.</strong> Linear expansion, α = 112 / 120 / 162 / 160 / 250 / 150 µm/(m·K) for
+           NBR / HNBR / FKM / EPDM / VMQ / FFKM, against the value selected for the housing: 11–23 for the metals,
+           47–140 for unfilled plastics. Chemical volume change gives a length factor <code>∛(1 + ΔV/100)</code>.
+           Coefficients are approximate and vary between compounds and grades.</p>
+        <p><strong>Extrusion limit.</strong> Indicative curve <code>g = K / p^n</code> with (K, n) = (2.06, 1.00),
+           (2.10, 0.80) and (2.21, 0.63) for 70, 80 and 90 Shore A, no back-up ring, capped at 0.40 mm. Fitted to the
+           shape of the classic extrusion diagrams as an early check —
+           <strong>always verify against the supplier's own diagram</strong>, which also covers cross section and temperature.</p>
+        <p><strong>Assessment limits</strong> are common design recommendations, not requirements from a standard, and
+           supplier limits may differ. <strong>Not modelled:</strong> compression set over time, friction, eccentricity,
+           ovality, surface roughness, gas permeation, housing deflection under pressure, spiral failure, rotary motion.
+           The calculation is geometric and is not a conformity check against ISO 3601-2.</p>
+        <p><strong>Sources.</strong> 349 AS568 sizes with tolerances from
            <a href="https://www.trelleborg.com/en/seals/-/media/tss-media-repository/tss_website/pdf-and-other-literature/catalogs/as568_o-rings_en.pdf" target="_blank" rel="noopener noreferrer">Trelleborg, AS568 O-Rings</a>
-           (seriene 001–050, 102–178, 201–284, 309–395 og 425–475).
-           Konstruksjonsgrunnlag: <a href="https://www.parker.com/content/dam/Parker-com/Literature/Praedifa/Catalogs/Catalog_O-Ring-Handbook_PTD5705-EN.pdf" target="_blank" rel="noopener noreferrer">Parker O-Ring Handbook</a>.
-           Arbeidsflyten er inspirert av <a href="https://engitoolbox.org/calculators/oring-calculator" target="_blank" rel="noopener noreferrer">EngiToolbox sin O-ringkalkulator</a>;
-           beregningsmodellen og koden her er egen.</p>
+           (series 001–050, 102–178, 201–284, 309–395, 425–475). Design basis:
+           <a href="https://www.parker.com/content/dam/Parker-com/Literature/Praedifa/Catalogs/Catalog_O-Ring-Handbook_PTD5705-EN.pdf" target="_blank" rel="noopener noreferrer">Parker O-Ring Handbook</a>.
+           Workflow inspired by <a href="https://engitoolbox.org/calculators/oring-calculator" target="_blank" rel="noopener noreferrer">the EngiToolbox O-ring calculator</a>;
+           the calculation model and the code here are our own.</p>
       </div>
     </details>
   </section>
 
   <footer>
-    <span>Én HTML-fil. Ingen innlogging, ingen sporing, alt regnes lokalt.</span>
+    <span>One HTML file. No sign-in, no tracking, everything calculated locally.</span>
     <span>mm · MPa · °C · Shore A</span>
   </footer>
 </main>
@@ -622,9 +629,9 @@ footer{border-top:1px solid var(--line);color:var(--faint);font-size:12.5px;padd
 <script>
 'use strict';
 
-/* AS568 / ISO 3601-1 klasse A: [nr, innvendig diameter, snortykkelse,
-   ID-toleranse, snortoleranse] i mm. Kilde: Trelleborg, AS568 O-Rings.
-   Tabellen ligger i filen, slik at siden virker uten nett. */
+/* AS568 / ISO 3601-1 class A: [no., inside diameter, cross section,
+   ID tolerance, cross section tolerance] in mm. Source: Trelleborg, AS568 O-Rings.
+   The table lives in this file so the page works offline. */
 const SIZES = [
 [1,0.74,1.02,0.1,0.08],
       [2,1.07,1.27,0.1,0.08],
@@ -976,16 +983,16 @@ const SIZES = [
       [474,633.48,6.99,2.92,0.15],
       [475,658.88,6.99,3.05,0.15]
 ];
-// ---- Materialdata -------------------------------------------------------
+// ---- Material data ------------------------------------------------------
 const MATERIALS = {
-  NBR:  { label:'NBR · nitril',      tMin:-30, tMax:100, alpha:112 },
-  HNBR: { label:'HNBR · hydrert',    tMin:-30, tMax:150, alpha:120 },
-  FKM:  { label:'FKM · fluorgummi',  tMin:-20, tMax:200, alpha:162 },
+  NBR:  { label:'NBR · nitrile',     tMin:-30, tMax:100, alpha:112 },
+  HNBR: { label:'HNBR · hydrogenated',tMin:-30, tMax:150, alpha:120 },
+  FKM:  { label:'FKM · fluoroelastomer',tMin:-20, tMax:200, alpha:162 },
   EPDM: { label:'EPDM',              tMin:-45, tMax:150, alpha:160 },
-  VMQ:  { label:'VMQ · silikon',     tMin:-55, tMax:200, alpha:250 },
-  FFKM: { label:'FFKM · perfluor',   tMin:-15, tMax:300, alpha:150 }
+  VMQ:  { label:'VMQ · silicone',    tMin:-55, tMax:200, alpha:250 },
+  FFKM: { label:'FFKM · perfluoro',  tMin:-15, tMax:300, alpha:150 }
 };
-// Ekstrusjonsgrense: g_max = K / p^n (mm, p i MPa). Se metodeavsnittet nederst paa siden.
+// Extrusion limit: g_max = K / p^n (mm, p in MPa). See the method section at the bottom of the page.
 const EXTRUSION = { 70:{K:2.06,n:1.00}, 80:{K:2.10,n:0.80}, 90:{K:2.21,n:0.63} };
 const GAP_CAP = 0.40;
 
@@ -996,20 +1003,20 @@ function extrusionLimit(pressure, hardness){
   return Math.min(GAP_CAP, K/Math.pow(pressure,n));
 }
 
-// ---- Volumbevarende snortykkelse ---------------------------------------
-// Fri ring: ID = a, snor = b. Torusvolum V = pi^2/4 * b^2 * (a+b).
-// Montert slik at ringens indre (outer=false) eller ytre (outer=true)
-// diameter blir `boundary`, med uendret volum:
-//   indre tilpasning: cs^2 * (boundary + cs) = b^2 * (a+b)
-//   ytre tilpasning:  cs^2 * (boundary - cs) = b^2 * (a+b)
+// ---- Volume-conserving cross section ------------------------------------
+// Free ring: ID = a, cross section = b. Torus volume V = pi^2/4 * b^2 * (a+b).
+// Installed so that the inner (outer=false) or outer (outer=true) diameter of
+// the ring becomes `boundary`, at unchanged volume:
+//   inside fit:  cs^2 * (boundary + cs) = b^2 * (a+b)
+//   outside fit: cs^2 * (boundary - cs) = b^2 * (a+b)
 function fittedCS(a, b, boundary, outer){
   const T = b*b*(a+b);
   if (!(boundary > 0) || !(T > 0)) return NaN;
   const f = cs => outer ? cs*cs*(boundary-cs) : cs*cs*(boundary+cs);
-  // Ytre: f stiger monotont opp til cs = 2*boundary/3 og faller etterpaa.
-  // Den fysiske greina er den stigende (cs -> b naar boundary -> a+2b).
+  // Outside: f rises monotonically up to cs = 2*boundary/3 and falls after that.
+  // The physical branch is the rising one (cs -> b as boundary -> a+2b).
   let lo = 0, hi = outer ? 2*boundary/3 : Math.max(b*4, 1);
-  if (outer && f(hi) < T) return NaN;           // ringen faar ikke plass
+  if (outer && f(hi) < T) return NaN;           // the ring does not fit
   if (!outer) while (f(hi) < T) hi *= 2;
   for (let i=0;i<200;i++){ const m=(lo+hi)/2; if (f(m) < T) lo=m; else hi=m; }
   return (lo+hi)/2;
@@ -1017,12 +1024,12 @@ function fittedCS(a, b, boundary, outer){
 
 const ringVolume = (a,b) => Math.PI*Math.PI/4*b*b*(a+b);
 
-// ---- Kjernegeometri -----------------------------------------------------
-// Betegnelser:
-//   c = boring / sylinderdiameter (hullet)   d = stempel- eller stangdiameter
-//   e = sporbunndiameter                      L = sporbredde
-// Aksialt: c = spor indre diameter, d = spor ytre diameter,
-//          e = spordybde, L = flensspalte.
+// ---- Core geometry ------------------------------------------------------
+// Notation:
+//   c = bore / cylinder diameter (the hole)   d = piston or rod diameter
+//   e = groove root diameter                  L = groove width
+// Axial: c = groove inner diameter, d = groove width (radial),
+//        e = groove depth, L = flange gap.
 function geometry(s, ring, dims, operating){
   const m = MATERIALS[s.material];
   const dT = operating ? s.temperature - 20 : 0;
@@ -1042,9 +1049,10 @@ function geometry(s, ring, dims, operating){
     glandVol = Math.PI/4*(e*e - d*d)*L;
     gap = c - d; machined = (e - c)/2;
   } else {
-    depth = e; width = (d - c)/2; outer = s.direction === 'internal';
-    boundary = outer ? d : c;
-    glandVol = Math.PI/4*(d*d - c*c)*e;
+    depth = e; width = d; outer = s.direction === 'internal';
+    const dOut = c + 2*d;                 // outer wall, derived from inner diameter and width
+    boundary = outer ? dOut : c;
+    glandVol = Math.PI/4*(dOut*dOut - c*c)*e;
     gap = L; machined = e;
   }
   if (!(depth > 0) || !(width > 0) || !(glandVol > 0) || !(boundary > 0)) return null;
@@ -1058,7 +1066,7 @@ function geometry(s, ring, dims, operating){
   return { depth, width, boundary, outer, csEff, squeeze, absSqueeze, fill, fit, gap, machined, a, b, glandVol };
 }
 
-// ---- Toleransestabling --------------------------------------------------
+// ---- Tolerance stack-up -------------------------------------------------
 const DIM_KEYS = ['c','d','e','L'];
 
 function evaluate(s, ring = s.ring){
@@ -1093,7 +1101,7 @@ function evaluate(s, ring = s.ring){
   const gapLimit = extrusionLimit(s.pressure, s.hardness);
   const minAbsLimit = s.dynamic ? 0.10 : 0.13;
 
-  // Harde krav. Brytes de, virker ikke tetningen som tenkt.
+  // Hard requirements. Break these and the seal does not work as intended.
   const ok = {
     squeeze: minSq >= limits[0]-1e-9 && maxSq <= limits[1]+1e-9,
     absolute: minAbs >= minAbsLimit-1e-9,
@@ -1102,12 +1110,12 @@ function evaluate(s, ring = s.ring){
     gap: maxGap <= gapLimit+1e-9 && minGap >= -1e-9,
     temp: s.temperature >= MATERIALS[s.material].tMin && s.temperature <= MATERIALS[s.material].tMax
   };
-  // Myke merknader. Verdt aa vite, men ikke i seg selv en feil.
+  // Soft notes. Worth knowing, but not a fault in themselves.
   const warn = {
-    loose: minFit < -1e-9,                 // ringen kan ligge lost i sporet
-    lowFill: maxFill < 50,                 // rommelig spor, ringen kan rulle
-    spiral: s.dynamic && ring.cs > 3.5,    // tykk snor i frem- og tilbakegang
-    highSqueeze: maxSq > limits[1] - 2     // ligger i overkant av vinduet
+    loose: minFit < -1e-9,                 // the ring may sit loose in the groove
+    lowFill: maxFill < 50,                 // roomy groove, the ring can roll
+    spiral: s.dynamic && ring.cs > 3.5,    // thick cross section, reciprocating
+    highSqueeze: maxSq > limits[1] - 2     // sits at the top of the window
   };
   const penalty = Math.max(0,limits[0]-minSq) + Math.max(0,maxSq-limits[1])
                 + Math.max(0,maxFill-85) + 5*(Math.max(0,-minFit) + Math.max(0,maxFit-fitLimit));
@@ -1116,19 +1124,20 @@ function evaluate(s, ring = s.ring){
            good: ok.squeeze && ok.absolute && ok.fill && ok.fit && ok.gap,
            score: penalty*100 + Math.abs(nominal.squeeze - s.target) + Math.abs(nominal.fill - 75)/10 };
 }
-// ---- Forslag til spormaal ------------------------------------------------
-// Fyller ut de maalene som ikke er laast. Sporhoyden settes fra onsket klem,
-// sporbredden fra 75 % sporfylling, og klaringen fra oppgitt verdi.
+// ---- Suggested groove dimensions ----------------------------------------
+// Fills in the dimensions that are not locked. The gland depth comes from the
+// target squeeze, the groove width from 75 % gland fill, and the clearance
+// from the value entered.
 const FILL_TARGET = 0.75, FILL_MAX = 0.85, NOMINAL_FIT = 0.015;
 function suggest(s, isLocked){
   const out = { c:s.dims.c.n, d:s.dims.d.n, e:s.dims.e.n, L:s.dims.L.n };
   const a = s.ring.id, b = s.ring.cs;
-  const frac = 1 - s.target/100;          // sporhoyde / effektiv snortykkelse
+  const frac = 1 - s.target/100;          // gland depth / effective cross section
   const clr = s.clearance;
   const V = ringVolume(a, b);
-  // Verste ring innenfor toleransene, slik at sporet ikke overfylles.
+  // Worst-case ring within tolerance, so the groove is not overfilled.
   const Vmax = ringVolume(a + (s.ring.idTol||0), b + (s.ring.csTol||0));
-  // Bredde som gir 75 % fylling nominelt, men aldri over 85 % med verste ring.
+  // Width giving 75 % fill nominally, but never above 85 % with the worst ring.
   const widthFor = (D1, D2) => {
     const ann = Math.PI/4*Math.abs(D1*D1 - D2*D2);
     return Math.max(V/(FILL_TARGET*ann), Vmax/(FILL_MAX*ann));
@@ -1152,29 +1161,29 @@ function suggest(s, isLocked){
     }
     if (!isLocked('L')) out.L = widthFor(out.e, out.d);
   } else {
-    // Aksialt: ringen legges mot den sporveggen trykket presser den mot,
-    // med en liten forspenning slik at toleransene ikke gjor den los.
+    // Axial: the ring is fitted against the groove wall the pressure pushes it
+    // towards, with a slight interference so tolerances cannot leave it loose.
+    // c is the groove inner diameter, d its radial width.
     if (s.direction === 'internal'){
-      if (!isLocked('d')) out.d = (a + 2*b)*(1 - NOMINAL_FIT);
-      if (!isLocked('e')){ const cs = fittedCS(a,b,out.d,true); out.e = (Number.isFinite(cs)?cs:b)*frac; }
-      if (!isLocked('c')){
-        const ann = Math.max(V/(FILL_TARGET*out.e), Vmax/(FILL_MAX*out.e));
-        out.c = Math.sqrt(Math.max(1e-9, out.d*out.d - 4*ann/Math.PI));
-      }
+      const dOut = (a + 2*b)*(1 - NOMINAL_FIT);       // outer wall, from the ring OD
+      if (!isLocked('e')){ const cs = fittedCS(a,b,dOut,true); out.e = (Number.isFinite(cs)?cs:b)*frac; }
+      const ann = Math.max(V/(FILL_TARGET*out.e), Vmax/(FILL_MAX*out.e));
+      if (!isLocked('c')) out.c = Math.sqrt(Math.max(1e-9, dOut*dOut - 4*ann/Math.PI));
+      if (!isLocked('d')) out.d = Math.max(1e-6, (dOut - out.c)/2);
     } else {
       if (!isLocked('c')) out.c = a*(1 + NOMINAL_FIT);
       if (!isLocked('e')){ const cs = fittedCS(a,b,out.c,false); out.e = (Number.isFinite(cs)?cs:b)*frac; }
       if (!isLocked('d')){
         const ann = Math.max(V/(FILL_TARGET*out.e), Vmax/(FILL_MAX*out.e));
-        out.d = Math.sqrt(out.c*out.c + 4*ann/Math.PI);
+        out.d = (Math.sqrt(out.c*out.c + 4*ann/Math.PI) - out.c)/2;
       }
     }
   }
   return widenForFill(s, out, isLocked);
 }
 
-// Kontrollerer forslaget mot hele toleransestablingen og utvider sporet til
-// verste tilfelle ligger under grensen for sporfylling.
+// Checks the suggestion against the full tolerance stack-up and widens the
+// groove until the worst case is below the gland fill limit.
 function widenForFill(s, out, isLocked){
   const mk = o => Object.assign({}, s, { dims: {
     c:{n:o.c,plus:s.dims.c.plus,minus:s.dims.c.minus}, d:{n:o.d,plus:s.dims.d.plus,minus:s.dims.d.minus},
@@ -1184,10 +1193,13 @@ function widenForFill(s, out, isLocked){
     if (!r.valid || !(r.maxFill > FILL_MAX*100)) break;
     const k = r.maxFill/(FILL_MAX*100)*1.002;
     if (s.seal === 'axial'){
-      const ann = (out.d*out.d - out.c*out.c)*k;
-      if (s.direction === 'internal' && !isLocked('c')) out.c = Math.sqrt(Math.max(1e-9, out.d*out.d - ann));
-      else if (s.direction === 'external' && !isLocked('d')) out.d = Math.sqrt(out.c*out.c + ann);
-      else break;
+      const dOut = out.c + 2*out.d, ann = (dOut*dOut - out.c*out.c)*k;
+      if (s.direction === 'internal' && !isLocked('c') && !isLocked('d')){
+        out.c = Math.sqrt(Math.max(1e-9, dOut*dOut - ann));   // grow inwards, outer wall stays put
+        out.d = (dOut - out.c)/2;
+      } else if (s.direction === 'external' && !isLocked('d')){
+        out.d = (Math.sqrt(out.c*out.c + ann) - out.c)/2;
+      } else break;
     } else if (!isLocked('L')) out.L *= k;
     else break;
   }
@@ -1195,34 +1207,35 @@ function widenForFill(s, out, isLocked){
 }
 
 
-/* ====================== GRENSESNITT ====================== */
+/* ====================== USER INTERFACE ====================== */
 
 const DIMS = {
-  piston: [['c','Sylinderdiameter','c'],['d','Stempeldiameter','d'],['e','Sporbunndiameter','e'],['L','Sporbredde','L']],
-  rod:    [['c','Hulldiameter','c'],['d','Stangdiameter','d'],['e','Sporbunndiameter','e'],['L','Sporbredde','L']],
-  axial:  [['c','Spor, indre diameter','c'],['d','Spor, ytre diameter','d'],['e','Spordybde','h'],['L','Flensspalte','s']]
+  piston: [['c','Cylinder bore dia','c'],['d','Piston dia','d'],['e','Groove dia','e'],['L','Groove width','L']],
+  rod:    [['c','Bore dia','c'],['d','Rod dia','d'],['e','Groove dia','e'],['L','Groove width','L']],
+  axial:  [['c','Groove inner dia','c'],['d','Groove width','L'],['e','Groove depth','h'],['L','Flange gap','s']]
 };
 const SEAL_NOTE = {
-  piston: 'Sporet ligger i stempelet. Ringen tetter mot sylinderveggen.',
-  rod:    'Sporet ligger i huset. Ringen tetter mot stangen.',
-  axial:  'Flatpakning mellom to flenser. Klemmes aksialt, ikke radialt.'
+  piston: 'The groove is in the piston. The ring seals against the cylinder wall.',
+  rod:    'The groove is in the housing. The ring seals against the rod.',
+  axial:  'Face seal between two flanges. Squeezed axially, not radially.'
 };
 const EXAMPLES = {
   piston: { size:224, c:'50.00', d:'49.92', e:'44.52', L:'4.79', lock:'c' },
   rod:    { size:224, c:'45.08', d:'45.00', e:'50.54', L:'4.69', lock:'d' },
-  axial:  { size:224, c:'40.49', d:'50.33', e:'2.78',  L:'0.00', lock:'d' }
+  axial:  { size:224, c:'40.49', d:'4.92',  e:'2.78',  L:'0.00', lock:'c' }
 };
 const LOCK_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10.5" rx="2.2"/><path class="sh-shut" d="M8.2 10.5V6.6a3.8 3.8 0 0 1 7.6 0v3.9"/><path class="sh-open" d="M8.2 10.5V6.6a3.8 3.8 0 0 1 7.6 0"/></svg>';
 
 let seal = 'piston';
+let simple = true;
 let summary = '';
 const $ = id => document.getElementById(id);
-const nf = (n, d = 2) => Number.isFinite(n) ? n.toLocaleString('nb-NO', { minimumFractionDigits: d, maximumFractionDigits: d }) : '–';
+const nf = (n, d = 2) => Number.isFinite(n) ? n.toLocaleString('en-GB', { minimumFractionDigits: d, maximumFractionDigits: d, useGrouping: false }) : '–';
 const r2 = n => Math.round(n * 100) / 100;
 const asCode = n => 'AS568-' + String(n).padStart(3, '0');
 const locked = id => { const b = document.querySelector('[data-lock="' + id + '"]'); return !!b && b.getAttribute('aria-pressed') === 'true'; };
 
-/* ---------- utfylling av nedtrekkslister ---------- */
+/* ---------- populating the drop-downs ---------- */
 function fillMaterials() {
   $('mat').innerHTML = Object.keys(MATERIALS)
     .map(k => '<option value="' + k + '">' + MATERIALS[k].label + '</option>').join('');
@@ -1253,7 +1266,7 @@ function syncRing() {
   $('r-id').readOnly = $('r-cs').readOnly = $('r-id-tol').readOnly = $('r-cs-tol').readOnly = $('std').checked;
 }
 
-/* ---------- spormålsrader ---------- */
+/* ---------- groove dimension rows ---------- */
 function renderDims(vals) {
   $('dims').innerHTML = DIMS[seal].map(function (row) {
     const id = row[0], label = row[1], sym = row[2];
@@ -1261,14 +1274,14 @@ function renderDims(vals) {
     return '<div class="dim">' +
       '<label for="' + id + '">' + label + ' <em>· ' + sym + '</em></label>' +
       '<input id="' + id + '" type="text" inputmode="decimal" value="' + vals[id] + '" data-num data-min="0" data-max="3000" data-label="' + label + '">' +
-      '<input id="' + id + '-plus" class="tol" type="text" inputmode="decimal" value="' + tolDef[0] + '" data-num data-min="0" data-max="10" data-label="Plusstoleranse for ' + label + '" aria-label="' + label + ', plusstoleranse" title="Plusstoleranse" placeholder="+">' +
-      '<input id="' + id + '-minus" class="tol" type="text" inputmode="decimal" value="' + tolDef[1] + '" data-num data-min="0" data-max="10" data-label="Minustoleranse for ' + label + '" aria-label="' + label + ', minustoleranse" title="Minustoleranse" placeholder="−">' +
-      '<button type="button" class="lock" data-lock="' + id + '" aria-pressed="false" title="Lås ' + label + ' ved forslag" aria-label="Lås ' + label + ' ved forslag">' + LOCK_SVG + '</button>' +
+      '<input id="' + id + '-plus" class="tol adv" type="text" inputmode="decimal" value="' + tolDef[0] + '" data-num data-min="0" data-max="10" data-label="Plus tolerance for ' + label + '" aria-label="' + label + ', plus tolerance" title="Plus tolerance" placeholder="+">' +
+      '<input id="' + id + '-minus" class="tol adv" type="text" inputmode="decimal" value="' + tolDef[1] + '" data-num data-min="0" data-max="10" data-label="Minus tolerance for ' + label + '" aria-label="' + label + ', minus tolerance" title="Minus tolerance" placeholder="−">' +
+      '<button type="button" class="lock adv" data-lock="' + id + '" aria-pressed="false" title="Lock ' + label + ' when suggesting" aria-label="Lock ' + label + ' when suggesting">' + LOCK_SVG + '</button>' +
       '</div>';
   }).join('');
 }
 
-/* ---------- innlesing ---------- */
+/* ---------- reading the inputs ---------- */
 function readInputs() {
   const v = {}, errors = [];
   document.querySelectorAll('[data-num]').forEach(function (el) {
@@ -1277,7 +1290,7 @@ function readInputs() {
     const lo = Number(el.dataset.min), hi = Number(el.dataset.max);
     const bad = !Number.isFinite(num) || num < lo || num > hi;
     el.setAttribute('aria-invalid', bad ? 'true' : 'false');
-    if (bad) errors.push(el.dataset.label + ' må være et tall mellom ' + nf(lo) + ' og ' + nf(hi) + '.');
+    if (bad) errors.push(el.dataset.label + ' must be a number between ' + nf(lo) + ' and ' + nf(hi) + '.');
     v[el.id] = num;
   });
   const dims = {};
@@ -1294,71 +1307,161 @@ function readInputs() {
   };
 }
 
-/* ---------- figur ---------- */
+/* ---------- figure ---------- */
+// Full diametral section, mirrored about the axis, so every housing dimension
+// can be dimensioned between the two surfaces it is actually measured across.
+// The groove detail is to scale; the distance out to the axis is compressed,
+// otherwise a 50 mm bore would leave the groove a few pixels tall.
 const FIG_DEFS = '<defs>' +
   '<pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">' +
   '<rect width="7" height="7" fill="var(--metal)"/><line x1="0" y1="0" x2="0" y2="7" stroke="var(--line-strong)" stroke-width="1.5"/></pattern>' +
   '<marker id="ar" markerWidth="7" markerHeight="7" refX="3.5" refY="3.5" orient="auto-start-reverse">' +
   '<path d="M0.5 0.5 L6 3.5 L0.5 6.5" fill="none" stroke="var(--faint)" stroke-width="1.2"/></marker></defs>';
 
+const p1 = v => (Math.round(v * 10) / 10).toString();
+const chipW = t => String(t).length * 6.4 + 13;
+const ext = d => '<path d="' + d + '" stroke="var(--line-strong)" stroke-width="1" stroke-dasharray="3 3"/>';
+const arr = d => '<path d="' + d + '" stroke="var(--faint)" stroke-width="1" marker-start="url(#ar)" marker-end="url(#ar)"/>';
+const axis = d => '<path d="' + d + '" stroke="var(--line-strong)" stroke-width="1" stroke-dasharray="16 4 3 4"/>';
+const hatch = d => '<path d="' + d + '" fill="url(#hatch)" stroke="var(--faint)" stroke-width="1.4" stroke-linejoin="round"/>';
+const small = (x, y, t, anchor) => '<text x="' + p1(x) + '" y="' + p1(y) + '" text-anchor="' + (anchor || 'start') +
+  '" font-size="10" fill="var(--faint)">' + t + '</text>';
+
+// centred, opaque label so a dimension stays readable over hatching
+function chip(x, y, t) {
+  const w = chipW(t);
+  return '<rect x="' + p1(x - w / 2) + '" y="' + p1(y - 9) + '" width="' + p1(w) + '" height="18" rx="4" fill="var(--panel)"/>' +
+    '<text x="' + p1(x) + '" y="' + p1(y + 4) + '" text-anchor="middle" font-size="11" fill="var(--dim)">' + t + '</text>';
+}
+// opaque label naming a part; `right` anchors it to the right of x instead
+function tag(x, y, t, right) {
+  const w = chipW(t), x0 = right ? x - w : x;
+  return '<rect x="' + p1(x0) + '" y="' + p1(y - 9) + '" width="' + p1(w) + '" height="18" rx="4" fill="var(--panel)" opacity=".92"/>' +
+    '<text x="' + p1(x0 + 6) + '" y="' + p1(y + 4) + '" font-size="11" fill="var(--dim)">' + t + '</text>';
+}
+// dimension between two parallel surfaces; `from` is where the extension lines start
+function vDim(x, ya, yb, from, t, side) {
+  const a = Math.min(ya, yb), b = Math.max(ya, yb), mid = (a + b) / 2;
+  let out = ext('M' + p1(from) + ' ' + p1(a) + 'H' + p1(x) + 'M' + p1(from) + ' ' + p1(b) + 'H' + p1(x));
+  if (b - a >= 26) return out + arr('M' + p1(x) + ' ' + p1(a + 1.5) + 'V' + p1(b - 1.5)) + chip(x, mid, t);
+  const dx = (side || 1) * 20;
+  return out + '<path d="M' + p1(x) + ' ' + p1(a) + 'V' + p1(b) + 'M' + p1(x) + ' ' + p1(mid) + 'H' + p1(x + dx) +
+    '" stroke="var(--faint)" stroke-width="1"/>' + chip(x + dx + (side || 1) * chipW(t) / 2, mid, t);
+}
+function hDim(y, xa, xb, from, t, side) {
+  const a = Math.min(xa, xb), b = Math.max(xa, xb), mid = (a + b) / 2;
+  const out = ext('M' + p1(a) + ' ' + p1(from) + 'V' + p1(y) + 'M' + p1(b) + ' ' + p1(from) + 'V' + p1(y));
+  if (b - a >= chipW(t) + 10) return out + arr('M' + p1(a + 1.5) + ' ' + p1(y) + 'H' + p1(b - 1.5)) + chip(mid, y, t);
+  // too narrow for the label to sit on the line: arrows outside, label to the side
+  const dx = (side || 1) * 16;
+  return out + arr('M' + p1(a - 13) + ' ' + p1(y) + 'H' + p1(a - 1)) + arr('M' + p1(b + 1) + ' ' + p1(y) + 'H' + p1(b + 13)) +
+    chip(mid + dx + (side || 1) * chipW(t) / 2, y, t);
+}
+// the ring, squeezed to the gland depth with its cross-sectional area preserved
+function ringAt(cx, cy, w, hPx) {
+  const rx = w / 2, ry = hPx / 2, st = Math.max(0, rx - ry);
+  return '<path d="M' + p1(cx - st) + ' ' + p1(cy - ry) + 'H' + p1(cx + st) +
+    'a' + p1(ry) + ' ' + p1(ry) + ' 0 0 1 0 ' + p1(2 * ry) + 'H' + p1(cx - st) +
+    'a' + p1(ry) + ' ' + p1(ry) + ' 0 0 1 0 ' + p1(-2 * ry) + 'Z" fill="var(--accent)" fill-opacity=".17" stroke="var(--accent)" stroke-width="2"/>';
+}
+function freeRing(cx, cy, bPx) {
+  return '<circle cx="' + p1(cx) + '" cy="' + p1(cy) + '" r="' + p1(bPx / 2) +
+    '" fill="none" stroke="var(--accent)" stroke-width="1.2" stroke-dasharray="3 3" opacity=".55"/>';
+}
+const ringWidth = (bE, h) => Math.max(h, (Math.PI / 4 * bE * bE - Math.PI / 4 * h * h) / h + h);
+
+/* Piston and rod: axis horizontal, section mirrored top to bottom.
+   c, d and e are then dimensioned right across the axis, as diameters. */
+function radialFigure(s, r, sym) {
+  const g = r.nominal, CX = 240, CY = 165, xL = 64, xR = 416, xLg = 84, xRg = 396;
+  const L = g.width, h = g.depth, bE = g.csEff;
+  const scale = Math.min(190 / L, 52 / bE);
+  const wPx = L * scale, hPx = h * scale, bPx = bE * scale;
+  const gapPx = Math.max(7, Math.min(16, g.gap / 2 * scale));     // clearance per side, opened up to stay visible
+  const piston = s.seal === 'piston';
+  const dir = piston ? 1 : -1;               // which way the groove lies from the sealing face
+  const yFace = piston ? 48 : 112;           // sealing face of the mating part
+  const yLand = yFace + dir * gapPx;         // land of the grooved part
+  const yRoot = yFace + dir * hPx;           // groove root
+  const edge = piston ? 26 : 20;             // outer edge of the outer part
+  const gl = CX - wPx / 2, gr = CX + wPx / 2, cy = (yFace + yRoot) / 2;
+  const mir = y => 2 * CY - y;
+  // surfaces that carry each diameter
+  const yC = piston ? yFace : yLand, yD = piston ? yLand : yFace;
+
+  // the body that touches the axis is left unclosed, so no stroke runs along it
+  const core = piston
+    ? 'M' + xLg + ' ' + CY + 'V' + p1(yLand) + 'H' + p1(gl) + 'V' + p1(yRoot) + 'H' + p1(gr) +
+      'V' + p1(yLand) + 'H' + xRg + 'V' + CY
+    : 'M' + xL + ' ' + CY + 'V' + p1(yFace) + 'H' + xR + 'V' + CY;
+  const band = piston
+    ? 'M' + xL + ' ' + edge + 'H' + xR + 'V' + p1(yFace) + 'H' + xL + 'Z'
+    : 'M' + xLg + ' ' + edge + 'H' + xRg + 'V' + p1(yLand) + 'H' + p1(gr) + 'V' + p1(yRoot) +
+      'H' + p1(gl) + 'V' + p1(yLand) + 'H' + xLg + 'Z';
+  const half = hatch(band) + hatch(core) + freeRing(CX, cy, bPx) + ringAt(CX, cy, ringWidth(bE, h) * scale, hPx);
+
+  return { vb: '0 0 480 330', body:
+    half + '<g transform="translate(0,330) scale(1,-1)">' + half + '</g>' +
+    axis('M18 ' + CY + 'H462') +
+    // groove width across the top, gland depth beside the groove
+    hDim(12, gl, gr, yRoot, sym.L + ' ' + nf(L)) +
+    vDim(gr + 28, yFace, yRoot, gr, 'h ' + nf(h), 1) +
+    // the three diameters, each measured between the two surfaces that define it
+    vDim(30, yD, mir(yD), piston ? xLg : xL, sym.d + ' ' + nf(s.dims.d.n), -1) +
+    vDim(450, yC, mir(yC), piston ? xR : xRg, sym.c + ' ' + nf(s.dims.c.n), 1) +
+    vDim(gl - 32, yRoot, mir(yRoot), gl, sym.e + ' ' + nf(s.dims.e.n), -1) +
+    tag((piston ? xL : xLg) + 6, 40, piston ? 'Cylinder' : 'Housing') +
+    tag((piston ? xLg : xL) + 6, CY - 12, piston ? 'Piston' : 'Rod') +
+    small(18, 322, 'c, d and e are diameters \u00b7 groove to scale') +
+    small(462, 322, 'dashed: free cross section ' + nf(bE) + ' mm', 'end') };
+}
+
+/* Axial: axis vertical, section mirrored left to right, so the groove appears
+   twice and its inner and outer diameter can be dimensioned across the axis. */
+function axialFigure(s, r, sym) {
+  const CX = 240, xL = 26, xR = 454, top = 40, bot = 196;
+  const g = r.nominal, wR = g.width, h = g.depth, bE = g.csEff;
+  const scale = Math.min(110 / wR, 52 / bE);
+  const wPx = wR * scale, hPx = h * scale, bPx = bE * scale;
+  const gapPx = Math.max(7, Math.min(16, g.gap * scale));         // flange gap, opened up to stay visible
+  const Xc = 52, Xd = Xc + wPx;                                   // inner and outer groove wall
+  const yFace = 68, yLand = yFace + gapPx, yRoot = yFace + hPx;
+  const cx = CX + (Xc + Xd) / 2, cy = (yFace + yRoot) / 2;
+  const rw = ringWidth(bE, h) * scale;
+
+  const flange = 'M' + xL + ' ' + p1(yLand) + 'H' + p1(CX - Xd) + 'V' + p1(yRoot) + 'H' + p1(CX - Xc) +
+    'V' + p1(yLand) + 'H' + p1(CX + Xc) + 'V' + p1(yRoot) + 'H' + p1(CX + Xd) + 'V' + p1(yLand) +
+    'H' + xR + 'V' + bot + 'H' + xL + 'Z';
+
+  return { vb: '0 0 480 256', body:
+    hatch('M' + xL + ' ' + top + 'H' + xR + 'V' + p1(yFace) + 'H' + xL + 'Z') + hatch(flange) +
+    freeRing(cx, cy, bPx) + ringAt(cx, cy, rw, hPx) +
+    freeRing(2 * CX - cx, cy, bPx) + ringAt(2 * CX - cx, cy, rw, hPx) +
+    axis('M' + CX + ' 26V236') +
+    hDim(16, CX - Xc, CX + Xc, yRoot, sym.c + ' ' + nf(s.dims.c.n)) +
+    hDim(bot + 22, CX + Xc, CX + Xd, yRoot, sym.d + ' ' + nf(s.dims.d.n), 1) +
+    vDim(CX + Xd + 26, yFace, yRoot, CX + Xd, sym.e + ' ' + nf(h), 1) +
+    vDim(CX - Xd - 26, yFace, yLand, CX - Xd, sym.L + ' ' + nf(s.dims.L.n), -1) +
+    tag(xR - 6, (top + yFace) / 2, 'Mating flange', true) +
+    tag(xR - 6, bot - 14, 'Grooved flange', true) +
+    small(18, 246, 'c is a diameter \u00b7 groove to scale') +
+    small(462, 246, 'dashed: free cross section ' + nf(bE) + ' mm', 'end') };
+}
+
 function drawFigure(s, r) {
   const svg = $('fig');
   if (!r || !r.valid) {
-    svg.innerHTML = FIG_DEFS + '<text x="240" y="108" text-anchor="middle" font-size="12.5" fill="var(--faint)">Ingen gyldig geometri å vise</text>';
+    svg.setAttribute('viewBox', '0 0 480 208');
+    svg.innerHTML = FIG_DEFS + '<text x="240" y="108" text-anchor="middle" font-size="12.5" fill="var(--faint)">No valid geometry to show</text>';
     return;
   }
-  const g = r.nominal;
-  const L = g.width, h = g.depth, bE = g.csEff;
-  const scale = Math.min(212 / L, 74 / bE);
-  const wPx = L * scale, hPx = h * scale, bPx = bE * scale;
-  const area = Math.PI / 4 * bE * bE;
-  const wRing = Math.max(h, (area - Math.PI / 4 * h * h) / h + h) * scale;
-  const gapPx = Math.max(2.5, Math.min(14, (s.seal === 'axial' ? g.gap : g.gap) * scale));
-
-  const up = s.seal === 'rod';                 // sporet ligger over tetteflaten
-  const dir = up ? -1 : 1;
-  const yFace = up ? 132 : 84;
-  const yLand = yFace + dir * gapPx;
-  const yRoot = yFace + dir * hPx;
-  const gl = 240 - wPx / 2, gr = 240 + wPx / 2;
-  const far = up ? 30 : 186;                   // ytterkant av den delen sporet står i
-  const near = up ? 186 : 30;                  // ytterkant av motflaten
-
-  const grooved = 'M24 ' + yLand + 'H' + gl.toFixed(1) + 'V' + yRoot.toFixed(1) + 'H' + gr.toFixed(1) +
-                  'V' + yLand + 'H456V' + far + 'H24Z';
-  const counter = 'M24 ' + yFace + 'H456V' + near + 'H24Z';
-  const cy = (yFace + yRoot) / 2;
-  const rx = wRing / 2, ry = hPx / 2;
-  const straight = Math.max(0, rx - ry);
-  const ringPath = 'M' + (240 - straight) + ' ' + (cy - ry) + 'H' + (240 + straight) +
-    'a' + ry + ' ' + ry + ' 0 0 1 0 ' + (2 * ry) + 'H' + (240 - straight) +
-    'a' + ry + ' ' + ry + ' 0 0 1 0 ' + (-2 * ry) + 'Z';
-
-  const names = s.seal === 'piston' ? ['Sylinder', 'Stempel'] : s.seal === 'rod' ? ['Stang', 'Hus'] : ['Motflens', 'Sporflens'];
-  const dimY = up ? 40 : 176;                  // linje for sporbredde
-  const tick = up ? -1 : 1;
-
-  svg.innerHTML = FIG_DEFS +
-    '<path d="' + counter + '" fill="url(#hatch)" stroke="var(--faint)" stroke-width="1.4" stroke-linejoin="round"/>' +
-    '<path d="' + grooved + '" fill="url(#hatch)" stroke="var(--faint)" stroke-width="1.4" stroke-linejoin="round"/>' +
-    '<circle cx="240" cy="' + cy + '" r="' + (bPx / 2) + '" fill="none" stroke="var(--accent)" stroke-width="1.2" stroke-dasharray="3 3" opacity=".55"/>' +
-    '<path d="' + ringPath + '" fill="var(--accent)" fill-opacity=".17" stroke="var(--accent)" stroke-width="2"/>' +
-    // sporbredde
-    '<path d="M' + gl.toFixed(1) + ' ' + (yRoot + tick * 4) + 'V' + dimY + 'M' + gr.toFixed(1) + ' ' + (yRoot + tick * 4) + 'V' + dimY + '" stroke="var(--line-strong)" stroke-width="1"/>' +
-    '<path d="M' + (gl + 1).toFixed(1) + ' ' + dimY + 'H' + (gr - 1).toFixed(1) + '" stroke="var(--faint)" stroke-width="1" marker-start="url(#ar)" marker-end="url(#ar)"/>' +
-    '<rect x="206" y="' + (dimY - 9) + '" width="68" height="18" rx="4" fill="var(--panel)"/>' +
-    '<text x="240" y="' + (dimY + 4) + '" text-anchor="middle" font-size="11" fill="var(--dim)">' + DIMS[seal][3][2] + ' ' + nf(L) + '</text>' +
-    // spordybde
-    '<path d="M' + (gr + 6).toFixed(1) + ' ' + yFace + 'H438M' + (gr + 6).toFixed(1) + ' ' + yRoot.toFixed(1) + 'H438" stroke="var(--line-strong)" stroke-width="1"/>' +
-    '<path d="M433 ' + (yFace + dir * 1.5) + 'V' + (yRoot - dir * 1.5).toFixed(1) + '" stroke="var(--faint)" stroke-width="1" marker-start="url(#ar)" marker-end="url(#ar)"/>' +
-    '<rect x="376" y="' + (cy - 9) + '" width="62" height="18" rx="4" fill="var(--panel)"/>' +
-    '<text x="407" y="' + (cy + 4) + '" text-anchor="middle" font-size="11" fill="var(--dim)">h ' + nf(h) + '</text>' +
-    '<text x="32" y="' + (up ? 170 : 54) + '" font-size="10.5" fill="var(--faint)">' + names[0] + '</text>' +
-    '<text x="32" y="' + (up ? 54 : 170) + '" font-size="10.5" fill="var(--faint)">' + names[1] + '</text>' +
-    '<text x="456" y="204" text-anchor="end" font-size="10" fill="var(--faint)">stiplet omriss: fri snor ' + nf(bE) + ' mm</text>';
+  const sym = {}; DIMS[s.seal].forEach(row => sym[row[0]] = row[2]);
+  const fig = s.seal === 'axial' ? axialFigure(s, r, sym) : radialFigure(s, r, sym);
+  svg.setAttribute('viewBox', fig.vb);
+  svg.innerHTML = FIG_DEFS + fig.body;
 }
 
-/* ---------- måletavle ---------- */
+/* ---------- metric tiles ---------- */
 function metricHTML(m) {
   const span = Math.max(m.max - m.min, 0);
   const pos = x => Math.max(0, Math.min(100, x / m.scale * 100));
@@ -1369,11 +1472,11 @@ function metricHTML(m) {
     '<div class="m-val">' + nf(m.value, m.dec) + '<small> ' + m.unit + '</small></div>' +
     '<div class="bar"><u style="left:' + bandL + '%;width:' + Math.max(0, bandR - bandL) + '%"></u>' +
     '<i style="left:' + valL + '%;width:' + Math.max(1.5, valR - valL) + '%"></i></div>' +
-    '<div class="m-range">' + (span < Math.pow(10, -m.dec) ? 'uten spredning' : nf(m.min, m.dec) + ' – ' + nf(m.max, m.dec) + ' ' + m.unit) + '</div>' +
+    '<div class="m-range">' + (span < Math.pow(10, -m.dec) ? 'no spread' : nf(m.min, m.dec) + ' – ' + nf(m.max, m.dec) + ' ' + m.unit) + '</div>' +
     '</div>';
 }
 
-/* ---------- hovedoppdatering ---------- */
+/* ---------- main update ---------- */
 function update() {
   const s = readInputs();
   const r = s.errors.length ? null : evaluate(s);
@@ -1385,10 +1488,10 @@ function update() {
 
   if (fail) {
     const why = s.errors.length ? s.errors[0]
-      : 'Målene gir ingen mulig geometri. Kontroller at sporbunnen ligger på riktig side av tetteflaten, og at sporet er bredere enn null.';
+      : 'These dimensions give no possible geometry. Check that the groove root is on the correct side of the sealing face, and that the groove is wider than zero.';
     $('res-error').textContent = why;
     $('verdict').className = 'pill bad';
-    $('verdict').textContent = 'Kontroller målene';
+    $('verdict').textContent = 'Check the dimensions';
     summary = '';
     return;
   }
@@ -1398,22 +1501,22 @@ function update() {
   const lvl = b => b ? 'ok' : 'bad';
 
   $('verdict').className = 'pill ' + (r.good ? (Object.values(r.warn).some(Boolean) ? 'warn' : 'ok') : 'bad');
-  $('verdict').textContent = r.good ? (Object.values(r.warn).some(Boolean) ? 'Se merknader' : 'Innenfor anbefaling') : 'Utenfor anbefaling';
+  $('verdict').textContent = r.good ? (Object.values(r.warn).some(Boolean) ? 'See notes' : 'Within recommendation') : 'Outside recommendation';
 
   $('ring-name').innerHTML = nf(s.ring.id) + ' × ' + nf(s.ring.cs) + ' <small>mm</small>';
-  $('ring-sub').textContent = (s.ring.code ? asCode(s.ring.code) : 'Egendefinert mål') + ' · ' +
-    (seal === 'piston' ? 'stempeltetning' : seal === 'rod' ? 'stangtetning' : 'aksialtetning') + ' · ' +
-    (s.dynamic ? 'dynamisk' : 'statisk') + ' · ' + s.material + ' ' + s.hardness + ' Shore A';
+  $('ring-sub').textContent = (s.ring.code ? asCode(s.ring.code) : 'Custom size') + ' · ' +
+    (seal === 'piston' ? 'piston seal' : seal === 'rod' ? 'rod seal' : 'axial seal') + ' · ' +
+    (s.dynamic ? 'dynamic' : 'static') + ' · ' + s.material + ' ' + s.hardness + ' Shore A';
 
   $('metrics').innerHTML = [
-    { name: 'Klem', goal: r.limits[0] + '–' + r.limits[1] + ' %', unit: '%', dec: 1, value: r.nominal.squeeze,
+    { name: 'Squeeze', goal: r.limits[0] + '–' + r.limits[1] + ' %', unit: '%', dec: 1, value: r.nominal.squeeze,
       min: r.minSq, max: r.maxSq, lo: r.limits[0], hi: r.limits[1], scale: 40, level: lvl(r.ok.squeeze) },
-    { name: 'Sporfylling', goal: 'maks 85 %', unit: '%', dec: 1, value: r.nominal.fill,
+    { name: 'Gland fill', goal: 'max 85 %', unit: '%', dec: 1, value: r.nominal.fill,
       min: r.minFill, max: r.maxFill, lo: 0, hi: 85, scale: 100, level: lvl(r.ok.fill) },
-    { name: outer ? 'Kompresjon av ytre Ø' : 'Strekk', goal: 'maks ' + r.fitLimit + ' %', unit: '%', dec: 2,
+    { name: outer ? 'Compression of outer Ø' : 'Stretch', goal: 'max ' + r.fitLimit + ' %', unit: '%', dec: 2,
       value: r.nominal.fit, min: r.minFit, max: r.maxFit, lo: 0, hi: r.fitLimit,
       scale: r.fitLimit * 2, level: lvl(r.ok.fit) },
-    { name: 'Ekstrusjonsgap', goal: 'maks ' + nf(r.gapLimit, 3) + ' mm', unit: 'mm', dec: 3, value: r.nominal.gap,
+    { name: 'Extrusion gap', goal: 'max ' + nf(r.gapLimit, 3) + ' mm', unit: 'mm', dec: 3, value: r.nominal.gap,
       min: r.minGap, max: r.maxGap, lo: 0, hi: r.gapLimit, scale: Math.max(r.gapLimit * 2, r.maxGap * 1.2),
       level: lvl(r.ok.gap) }
   ].map(metricHTML).join('');
@@ -1422,57 +1525,57 @@ function update() {
     const d = s.dims[row[0]];
     return [row[1] + ' · ' + row[2], nf(d.n) + ' <em>+' + nf(d.plus, 3) + ' / −' + nf(d.minus, 3) + '</em> mm'];
   });
-  rows.push(['Sporhøyde (klemhøyde)', nf(r.nominal.depth) + ' mm']);
-  rows.push(['Effektiv snortykkelse', nf(r.nominal.csEff) + ' mm']);
-  rows.push(['Absolutt klem', nf(r.nominal.absSqueeze) + ' <em>min ' + nf(r.minAbs) + '</em> mm']);
-  if (seal !== 'axial') rows.push(['Sporets frestedybde', nf(r.nominal.machined) + ' mm']);
+  rows.push(['Gland depth (squeeze height)', nf(r.nominal.depth) + ' mm']);
+  rows.push(['Effective cross section', nf(r.nominal.csEff) + ' mm']);
+  rows.push(['Absolute squeeze', nf(r.nominal.absSqueeze) + ' <em>min ' + nf(r.minAbs) + '</em> mm']);
+  if (seal !== 'axial') rows.push(['Machined groove depth', nf(r.nominal.machined) + ' mm']);
   $('res-tab').innerHTML = rows.map(x => '<tr><th scope="row">' + x[0] + '</th><td>' + x[1] + '</td></tr>').join('');
 
   const ck = [];
   const put = (level, text) => ck.push([level, text]);
   put(r.ok.squeeze ? 'ok' : 'bad', r.ok.squeeze
-    ? 'Klemmen holder seg i ' + nf(r.minSq, 1) + '–' + nf(r.maxSq, 1) + ' % gjennom hele toleransestablingen.'
-    : 'Klemmen går utenfor ' + r.limits[0] + '–' + r.limits[1] + ' % (blir ' + nf(r.minSq, 1) + '–' + nf(r.maxSq, 1) + ' %). ' +
-      (r.minSq < r.limits[0] ? 'For lite klem gir lekkasje ved lavt trykk og i kulde.' : 'For mye klem gir friksjon, varme og raskere aldring.'));
-  if (!r.ok.absolute) put('bad', 'Minste absolutte klem er ' + nf(r.minAbs) + ' mm, under ' + nf(r.minAbsLimit) + ' mm. På tynne snorer spiser ruhet og ovalitet opp klemmen.');
+    ? 'The squeeze stays within ' + nf(r.minSq, 1) + '–' + nf(r.maxSq, 1) + ' % across the whole tolerance stack-up.'
+    : 'The squeeze falls outside ' + r.limits[0] + '–' + r.limits[1] + ' % (it becomes ' + nf(r.minSq, 1) + '–' + nf(r.maxSq, 1) + ' %). ' +
+      (r.minSq < r.limits[0] ? 'Too little squeeze leaks at low pressure and in the cold.' : 'Too much squeeze gives friction, heat and faster ageing.'));
+  if (!r.ok.absolute) put('bad', 'The smallest absolute squeeze is ' + nf(r.minAbs) + ' mm, below ' + nf(r.minAbsLimit) + ' mm. On thin cross sections, roughness and out-of-roundness eat the squeeze up.');
   put(r.ok.fill ? 'ok' : 'bad', r.ok.fill
-    ? 'Sporfyllingen når høyst ' + nf(r.maxFill, 1) + ' %, med rom igjen for varme og svelling.'
-    : 'Sporfyllingen når ' + nf(r.maxFill, 1) + ' %. Over 85 % er det for lite rom til varmeutvidelse, og hydraulisk lås kan sprenge sporet.');
+    ? 'The gland fill reaches at most ' + nf(r.maxFill, 1) + ' %, leaving room for heat and swell.'
+    : 'The gland fill reaches ' + nf(r.maxFill, 1) + ' %. Above 85 % there is too little room for thermal expansion, and hydraulic lock can burst the groove.');
   put(r.ok.fit ? 'ok' : 'bad', (outer
-    ? 'Ytre diameter presses sammen ' + nf(r.minFit, 1) + '–' + nf(r.maxFit, 1) + ' %'
-    : 'Ringen strekkes ' + nf(r.minFit, 1) + '–' + nf(r.maxFit, 1) + ' %') +
-    (r.ok.fit ? ', innenfor ' + r.fitLimit + ' %.' : ', over grensen på ' + r.fitLimit + ' %. ' +
-      (outer ? 'For mye kompresjon får ringen til å bukle i sporet.' : 'Strekk tynner snoren og gir varig strekkspenning i gummien.')));
+    ? 'The outside diameter is compressed ' + nf(r.minFit, 1) + '–' + nf(r.maxFit, 1) + ' %'
+    : 'The ring is stretched ' + nf(r.minFit, 1) + '–' + nf(r.maxFit, 1) + ' %') +
+    (r.ok.fit ? ', within ' + r.fitLimit + ' %.' : ', above the limit of ' + r.fitLimit + ' %. ' +
+      (outer ? 'Too much compression makes the ring buckle in the groove.' : 'Stretch thins the cross section and leaves a permanent tensile strain in the rubber.')));
   put(r.ok.gap ? 'ok' : 'bad', r.ok.gap
-    ? 'Ekstrusjonsgapet blir høyst ' + nf(r.maxGap, 3) + ' mm mot en veiledende grense på ' + nf(r.gapLimit, 3) + ' mm ved ' + nf(s.pressure, 0) + ' MPa.'
-    : (r.minGap < 0 ? 'Klaringen blir negativ. Kontroller at boring og stempel har riktig innbyrdes mål.'
-      : 'Gapet blir ' + nf(r.maxGap, 3) + ' mm mot veiledende grense ' + nf(r.gapLimit, 3) + ' mm ved ' + nf(s.pressure, 0) + ' MPa og ' + s.hardness + ' Shore A. Stram pasningen, velg hardere gummi, eller bruk støttering.'));
+    ? 'The extrusion gap reaches at most ' + nf(r.maxGap, 3) + ' mm against an indicative limit of ' + nf(r.gapLimit, 3) + ' mm at ' + nf(s.pressure, 0) + ' MPa.'
+    : (r.minGap < 0 ? 'The clearance is negative. Check that the bore and the piston have the right dimensions relative to each other.'
+      : 'The gap becomes ' + nf(r.maxGap, 3) + ' mm against an indicative limit of ' + nf(r.gapLimit, 3) + ' mm at ' + nf(s.pressure, 0) + ' MPa and ' + s.hardness + ' Shore A. Tighten the fit, pick a harder compound, or use a back-up ring.'));
   put(r.ok.temp ? 'ok' : 'warn', r.ok.temp
-    ? s.material + ' dekker ' + nf(s.temperature, 0) + ' °C (' + mat.tMin + ' til ' + mat.tMax + ' °C).'
-    : nf(s.temperature, 0) + ' °C ligger utenfor vanlig område for ' + s.material + ' (' + mat.tMin + ' til ' + mat.tMax + ' °C). Velg et annet materiale eller bekreft blandingen.');
-  if (r.warn.loose) put('warn', 'I verste toleransetilfelle ligger ringen så vidt løst mot sporbunnen (' + nf(r.minFit, 2) + ' %). Den holdes fortsatt av klemmen, men kan være vanskelig å få på plass ved montering.');
-  if (r.warn.lowFill) put('warn', 'Sporfyllingen er bare ' + nf(r.minFill, 1) + ' % på det laveste. Et romslig spor lar ringen rulle, som ved bevegelse kan gi spiralbrudd.');
-  if (r.warn.spiral) put('warn', 'Snor på ' + nf(s.ring.cs) + ' mm i dynamisk bruk er utsatt for spiralbrudd. Vurder tynnere snor, bedre smøring eller en profiltetning.');
-  if (s.swell > 0) put('warn', 'Svellingen på ' + nf(s.swell, 0) + ' % er regnet inn i drift. Kontroller verdien mot medium og temperatur.');
-  if (s.pressure > 0 && s.dynamic && s.pressure > 35) put('warn', 'Over 35 MPa i dynamisk bruk er en ren O-ring sjelden nok alene. Vurder en profiltetning med støttering.');
+    ? s.material + ' covers ' + nf(s.temperature, 0) + ' °C (' + mat.tMin + ' to ' + mat.tMax + ' °C).'
+    : nf(s.temperature, 0) + ' °C is outside the usual range for ' + s.material + ' (' + mat.tMin + ' to ' + mat.tMax + ' °C). Pick another material or confirm the compound.');
+  if (r.warn.loose) put('warn', 'In the worst tolerance case the ring sits marginally loose against the groove root (' + nf(r.minFit, 2) + ' %). It is still held by the squeeze, but it can be awkward to get in place during assembly.');
+  if (r.warn.lowFill) put('warn', 'The gland fill is only ' + nf(r.minFill, 1) + ' % at its lowest. A roomy groove lets the ring roll, which under motion can cause spiral failure.');
+  if (r.warn.spiral) put('warn', 'A ' + nf(s.ring.cs) + ' mm cross section in dynamic use is prone to spiral failure. Consider a thinner cross section, better lubrication or a profiled seal.');
+  if (s.swell > 0) put('warn', 'The swell of ' + nf(s.swell, 0) + ' % is included in the operating case. Check the value against medium and temperature.');
+  if (s.pressure > 0 && s.dynamic && s.pressure > 35) put('warn', 'Above 35 MPa in dynamic use a plain O-ring is rarely enough on its own. Consider a profiled seal with a back-up ring.');
   $('checks').innerHTML = ck.map(x => '<div class="ck ' + x[0] + '"><b>' + (x[0] === 'ok' ? '✓' : x[0] === 'warn' ? '!' : '×') + '</b><span>' + x[1] + '</span></div>').join('');
 
-  summary = ['O-RING – SPORDIMENSJONERING', '',
-    (s.ring.code ? asCode(s.ring.code) : 'Egendefinert') + ': ' + nf(s.ring.id) + ' × ' + nf(s.ring.cs) + ' mm (±' + nf(s.ring.idTol) + ' / ±' + nf(s.ring.csTol) + ')',
+  summary = ['O-RING – GROOVE SIZING', '',
+    (s.ring.code ? asCode(s.ring.code) : 'Custom') + ': ' + nf(s.ring.id) + ' × ' + nf(s.ring.cs) + ' mm (±' + nf(s.ring.idTol) + ' / ±' + nf(s.ring.csTol) + ')',
     $('ring-sub').textContent, '']
     .concat(DIMS[seal].map(row => row[1] + ' (' + row[2] + '): ' + nf(s.dims[row[0]].n) + ' +' + nf(s.dims[row[0]].plus, 3) + ' / −' + nf(s.dims[row[0]].minus, 3) + ' mm'))
-    .concat(['', 'Sporhøyde: ' + nf(r.nominal.depth) + ' mm',
-      'Klem: ' + nf(r.nominal.squeeze, 1) + ' % (' + nf(r.minSq, 1) + '–' + nf(r.maxSq, 1) + ' %)',
-      'Sporfylling: ' + nf(r.nominal.fill, 1) + ' % (maks ' + nf(r.maxFill, 1) + ' %)',
-      (outer ? 'Kompresjon ytre Ø: ' : 'Strekk: ') + nf(r.nominal.fit, 2) + ' % (' + nf(r.minFit, 2) + '–' + nf(r.maxFit, 2) + ' %)',
-      'Ekstrusjonsgap: maks ' + nf(r.maxGap, 3) + ' mm (veiledende grense ' + nf(r.gapLimit, 3) + ' mm)',
-      'Drift: ' + nf(s.pressure, 1) + ' MPa, ' + nf(s.temperature, 0) + ' °C, volumendring ' + nf(s.swell, 1) + ' %', ''])
-    .concat(ck.map(x => (x[0] === 'ok' ? '[ok] ' : x[0] === 'warn' ? '[merk] ' : '[avvik] ') + x[1]))
-    .concat(['', 'Geometrisk forberegning ved 20 °C referanse. Ikke en samsvarskontroll mot ISO 3601-2.',
-      'Materiale, medium, trykk og ekstrusjonsgap må verifiseres mot leverandørens data.']).join('\n');
+    .concat(['', 'Gland depth: ' + nf(r.nominal.depth) + ' mm',
+      'Squeeze: ' + nf(r.nominal.squeeze, 1) + ' % (' + nf(r.minSq, 1) + '–' + nf(r.maxSq, 1) + ' %)',
+      'Gland fill: ' + nf(r.nominal.fill, 1) + ' % (max ' + nf(r.maxFill, 1) + ' %)',
+      (outer ? 'Compression outer Ø: ' : 'Stretch: ') + nf(r.nominal.fit, 2) + ' % (' + nf(r.minFit, 2) + '–' + nf(r.maxFit, 2) + ' %)',
+      'Extrusion gap: max ' + nf(r.maxGap, 3) + ' mm (indicative limit ' + nf(r.gapLimit, 3) + ' mm)',
+      'Operating: ' + nf(s.pressure, 1) + ' MPa, ' + nf(s.temperature, 0) + ' °C, volume change ' + nf(s.swell, 1) + ' %', ''])
+    .concat(ck.map(x => (x[0] === 'ok' ? '[ok] ' : x[0] === 'warn' ? '[note] ' : '[fail] ') + x[1]))
+    .concat(['', 'Geometric preliminary calculation at a 20 °C reference. Not a conformity check against ISO 3601-2.',
+      'Material, medium, pressure and extrusion gap must be verified against supplier data.']).join('\n');
 }
 
-/* ---------- forslag ---------- */
+/* ---------- suggestion ---------- */
 function say(text, bad) {
   const el = $('msg');
   el.textContent = text; el.className = 'msg' + (bad ? ' bad' : ''); el.hidden = false;
@@ -1480,15 +1583,15 @@ function say(text, bad) {
 function doSuggest() {
   const s = readInputs();
   const ringBad = ['r-id', 'r-cs', 'r-id-tol', 'r-cs-tol'].some(id => $(id).getAttribute('aria-invalid') === 'true');
-  if (ringBad) { say('Rett O-ringens mål før du ber om et forslag.', true); return; }
+  if (ringBad) { say('Correct the O-ring dimensions before asking for a suggestion.', true); return; }
   const anchor = DIMS[seal].map(r => r[0]).filter(id => locked(id));
   if (!anchor.length) {
     const need = seal === 'piston' ? 'c' : seal === 'rod' ? 'd' : null;
-    if (need && !Number.isFinite(s.dims[need].n)) { say('Lås minst ett mål, eller fyll inn ' + DIMS[seal].find(r => r[0] === need)[1].toLowerCase() + ' først.', true); return; }
+    if (need && !Number.isFinite(s.dims[need].n)) { say('Lock at least one dimension, or fill in ' + DIMS[seal].find(r => r[0] === need)[1].toLowerCase() + ' first.', true); return; }
   }
   const out = suggest(s, locked);
   if (['c', 'd', 'e', 'L'].some(k => !Number.isFinite(out[k]) || out[k] < 0)) {
-    say('Denne ringen gir ingen mulig geometri med de låste målene. Prøv en annen størrelse eller lås færre mål.', true); return;
+    say('This ring gives no possible geometry with the locked dimensions. Try another size or lock fewer dimensions.', true); return;
   }
   let n = 0;
   DIMS[seal].forEach(function (row) {
@@ -1498,12 +1601,12 @@ function doSuggest() {
   });
   update();
   const after = evaluate(readInputs());
-  say(n + ' mål fylt ut fra ' + nf(s.target, 0) + ' % ønsket klem og 75 % sporfylling. ' +
-    (after.valid && after.good ? 'Forslaget ligger innenfor alle grensene.' : 'Forslaget bryter minst én grense – se kontrollpunktene.'),
+  say(n + (n === 1 ? ' dimension' : ' dimensions') + ' filled in from ' + nf(s.target, 0) + ' % target squeeze and 75 % gland fill. ' +
+    (after.valid && after.good ? 'The suggestion is within every limit.' : 'The suggestion breaks at least one limit – see the check list.'),
     !(after.valid && after.good));
 }
 
-/* ---------- eksempel ---------- */
+/* ---------- example ---------- */
 function loadExample(type) {
   seal = type || 'piston';
   const ex = EXAMPLES[seal];
@@ -1511,7 +1614,7 @@ function loadExample(type) {
   $('seal-note').textContent = SEAL_NOTE[seal];
   $('dir-wrap').hidden = seal !== 'axial';
   $('dynamic').disabled = seal === 'axial';
-  // Eksempelet er en statisk konstruksjon ved romtemperatur; tilbakestill hele driftstilstanden.
+  // The example is a static design at room temperature; reset the whole operating state.
   document.querySelector('input[name=app][value=static]').checked = true;
   $('dir').value = 'internal';
   $('press').value = '10'; $('temp').value = '20'; $('swell').value = '0';
@@ -1522,15 +1625,32 @@ function loadExample(type) {
   const lk = document.querySelector('[data-lock="' + ex.lock + '"]');
   if (lk) lk.setAttribute('aria-pressed', 'true');
   $('target').value = $('dynamic').checked ? '15' : '22';
-  $('dims-note').textContent = seal === 'axial'
-    ? 'Spordybden er klemhøyden. Flensspalten er gapet mellom flensene, normalt null ved metallisk anlegg.'
-    : 'Lås målene som allerede er bestemt i konstruksjonen, så beholdes de når du ber om et forslag.';
+  setDimsNote();
   $('msg').hidden = true;
   $('copy-msg').hidden = true;
   update();
 }
 
-/* ---------- hendelser ---------- */
+/* ---------- simple / advanced mode ---------- */
+// Simple mode only hides inputs; every field keeps its value and is still read,
+// so the calculation and the tolerance stack-up are identical in both modes.
+function setDimsNote() {
+  $('dims-note').textContent = seal === 'axial'
+    ? 'The groove depth is the squeeze height. The flange gap is the gap between the flanges, normally zero with metal-to-metal contact.'
+    : simple
+      ? 'Enter the dimensions you already know, then press \u201cSuggest dimensions\u201d to fill in the rest.'
+      : 'Lock the dimensions already fixed in the design and they are kept when you ask for a suggestion.';
+}
+function setMode(mode) {
+  simple = mode !== 'advanced';
+  document.body.classList.toggle('simple', simple);
+  setDimsNote();
+}
+
+/* ---------- events ---------- */
+document.querySelector('.mode .seg').addEventListener('change', function (e) {
+  if (e.target.name === 'mode') setMode(e.target.value);
+});
 $('form').addEventListener('submit', e => e.preventDefault());
 $('form').addEventListener('input', function (e) {
   if (!e.target.matches('[data-num]')) return;
@@ -1546,7 +1666,7 @@ $('form').addEventListener('click', function (e) {
   const lk = e.target.closest('[data-lock]');
   if (lk) { lk.setAttribute('aria-pressed', lk.getAttribute('aria-pressed') === 'true' ? 'false' : 'true'); return; }
   const t = e.target.closest('[data-seal]');
-  if (t && t.dataset.seal !== seal) { loadExample(t.dataset.seal); say('Eksempelmål lastet for denne tetningstypen. Legg inn dine egne mål.'); }
+  if (t && t.dataset.seal !== seal) { loadExample(t.dataset.seal); say('Example dimensions loaded for this seal type. Enter your own dimensions.'); }
 });
 $('suggest').addEventListener('click', doSuggest);
 $('reset').addEventListener('click', function () { loadExample(seal); });
@@ -1563,12 +1683,13 @@ $('copy').addEventListener('click', async function () {
     ta.remove();
   }
   const el = $('copy-msg');
-  el.textContent = done ? 'Oppsummeringen er kopiert.' : 'Nettleseren tillot ikke kopiering. Bruk «Skriv ut» i stedet.';
+  el.textContent = done ? 'Summary copied.' : 'The browser did not allow copying. Use “Print” instead.';
   el.className = 'msg' + (done ? '' : ' bad');
   el.hidden = false;
 });
 
 fillMaterials();
+setMode(document.querySelector('input[name=mode]:checked').value);
 loadExample('piston');
 </script>
 </body>
