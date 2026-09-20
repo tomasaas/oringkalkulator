@@ -1,0 +1,1575 @@
+<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>O-ringkalkulator · klem, sporfylling og spormål</title>
+<meta name="description" content="Dimensjoner og kontroller spor for O-ringer: klem, sporfylling, strekk og ekstrusjonsgap etter AS568 / ISO 3601.">
+<style>
+:root{
+  --bg:#f6f7f9; --panel:#ffffff; --ink:#15181d; --dim:#5c6470; --faint:#8b939f;
+  --line:#e4e7ec; --line-strong:#d2d7df; --field:#ffffff; --field-ro:#f2f4f7; --metal:#e6ebf2;
+  --accent:#2f5fd0; --accent-soft:#eaf0fd; --accent-ink:#2350ba;
+  --ok:#17795a; --ok-soft:#e6f5ef; --warn:#8d5a05; --warn-soft:#fdf2df; --bad:#b03030; --bad-soft:#fdeded;
+  --radius:10px; --shadow:0 1px 2px rgba(18,24,35,.05), 0 6px 18px rgba(18,24,35,.04);
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#0f1115; --panel:#171a20; --ink:#e9ecf1; --dim:#a2abb8; --faint:#79828f;
+    --line:#262b33; --line-strong:#343a45; --field:#12151a; --field-ro:#1b1f26; --metal:#242b36;
+    --accent:#6f9bf5; --accent-soft:#1a2436; --accent-ink:#9dbcfb;
+    --ok:#4fc79c; --ok-soft:#13261f; --warn:#e0ac54; --warn-soft:#2a2115; --bad:#f08080; --bad-soft:#2c1818;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 6px 18px rgba(0,0,0,.25);
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font:15px/1.6 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+  font-variant-numeric:tabular-nums; -webkit-font-smoothing:antialiased;
+}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:0;padding:0}
+a{color:var(--accent);text-underline-offset:3px;text-decoration-thickness:1px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+[hidden]{display:none !important}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+/* ---------- ramme ---------- */
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+header.top{border-bottom:1px solid var(--line);background:var(--panel)}
+.top-in{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 0}
+.logo{display:flex;align-items:center;gap:10px;font-weight:650;letter-spacing:-.2px}
+.logo i{width:20px;height:20px;border:5px solid var(--accent);border-radius:50%;display:block}
+.top-note{color:var(--faint);font-size:12.5px}
+.hero{padding:40px 0 26px;max-width:640px}
+.kicker{font-size:11px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:var(--accent)}
+h1{font-size:clamp(28px,4.4vw,38px);line-height:1.15;letter-spacing:-1px;margin:10px 0 12px;font-weight:680}
+.hero p{margin:0;color:var(--dim);font-size:16px}
+
+/* ---------- oppsett ---------- */
+.grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:20px;align-items:start;padding-bottom:36px}
+@media (max-width:900px){.grid{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+.sect{padding:20px 22px;border-bottom:1px solid var(--line)}
+.sect:last-child{border-bottom:0}
+.sect-h{display:flex;align-items:center;gap:10px;margin:0 0 16px}
+.sect-h b{font-size:11px;font-weight:700;color:var(--faint);letter-spacing:.5px;min-width:18px}
+.sect-h h2{font-size:14.5px;margin:0;font-weight:640;letter-spacing:-.1px}
+.sect-h .spacer{flex:1}
+
+/* ---------- felt ---------- */
+label{display:block;font-size:12.5px;color:var(--dim);margin:0 0 6px;font-weight:500}
+input[type=text],select{
+  width:100%;height:40px;padding:0 11px;border:1px solid var(--line-strong);border-radius:7px;
+  background:var(--field);outline:none;transition:border-color .12s,box-shadow .12s;
+}
+select{padding-right:8px}
+input[type=text]:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+input[readonly]{background:var(--field-ro);color:var(--dim)}
+input[aria-invalid=true]{border-color:var(--bad);background:var(--bad-soft)}
+.fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.fields .wide{grid-column:1/-1}
+.unit{position:relative}
+.unit input{padding-right:40px}
+.unit span{position:absolute;right:11px;top:0;line-height:40px;color:var(--faint);font-size:12px;pointer-events:none}
+
+/* valg av tetningstype */
+.types{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.type{border:1px solid var(--line-strong);border-radius:8px;padding:11px 4px 9px;display:grid;justify-items:center;gap:7px;color:var(--dim);font-size:12.5px;font-weight:550;transition:.12s}
+.type svg{width:56px;height:30px}
+.type:hover{border-color:var(--accent)}
+.type[aria-pressed=true]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent-ink);box-shadow:inset 0 0 0 1px var(--accent)}
+.seg{display:inline-flex;padding:3px;background:var(--field-ro);border-radius:8px;gap:2px}
+.seg label{margin:0;cursor:pointer}
+.seg input{position:absolute;opacity:0;width:1px;height:1px}
+.seg span{display:block;padding:5px 13px;border-radius:6px;font-size:12.5px;color:var(--dim);transition:.12s}
+.seg input:checked+span{background:var(--panel);color:var(--accent-ink);font-weight:600;box-shadow:0 1px 3px rgba(20,30,50,.12)}
+.seg input:disabled+span{opacity:.4;cursor:not-allowed}
+.seg input:focus-visible+span{outline:2px solid var(--accent);outline-offset:1px}
+.row-between{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:16px;flex-wrap:wrap}
+.note{color:var(--dim);font-size:12.5px;margin:11px 0 0}
+.check{display:flex;align-items:center;gap:9px;font-size:13px;color:var(--ink);margin-bottom:14px;cursor:pointer}
+.check input{width:16px;height:16px;accent-color:var(--accent);margin:0}
+
+/* spormål */
+.dims-head{display:grid;grid-template-columns:minmax(96px,1.3fr) minmax(64px,.85fr) 54px 54px 30px;gap:7px;font-size:10.5px;color:var(--faint);letter-spacing:.4px;text-transform:uppercase;margin-bottom:7px}
+.dim{display:grid;grid-template-columns:minmax(96px,1.3fr) minmax(64px,.85fr) 54px 54px 30px;gap:7px;align-items:center;margin-bottom:8px}
+.dim label{margin:0;font-size:12.5px;color:var(--ink)}
+.dim label em{font-style:normal;color:var(--faint)}
+.dim input{height:36px;font-size:13.5px}
+.dim input.tol{padding:0 7px;font-size:12.5px;color:var(--dim)}
+.lock{width:30px;height:34px;display:grid;place-items:center;border-radius:6px;color:var(--faint);transition:.12s}
+.lock svg{width:15px;height:15px}
+.lock:hover{background:var(--field-ro);color:var(--dim)}
+.lock[aria-pressed=true]{background:var(--accent-soft);color:var(--accent-ink)}
+.lock[aria-pressed=true] .sh-open{display:none}
+.lock[aria-pressed=false] .sh-shut{display:none}
+
+/* knapper */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:1px solid var(--line-strong);border-radius:7px;padding:8px 13px;font-size:12.5px;font-weight:600;color:var(--dim);background:var(--panel);transition:.12s}
+.btn:hover{border-color:var(--accent);color:var(--accent-ink)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.primary:hover{filter:brightness(1.08);color:#fff}
+.btn.soft{background:var(--accent-soft);border-color:transparent;color:var(--accent-ink)}
+.msg{font-size:12.5px;margin:12px 0 0;color:var(--accent-ink)}
+.msg.bad{color:var(--bad)}
+
+/* ---------- resultat ---------- */
+.res{position:sticky;top:16px;display:grid;gap:16px}
+@media (max-width:900px){.res{position:static}}
+.res-top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 22px;border-bottom:1px solid var(--line)}
+.res-top h2{font-size:14.5px;margin:0;font-weight:640}
+.pill{font-size:11.5px;font-weight:650;padding:4px 10px;border-radius:99px;white-space:nowrap}
+.pill.ok{background:var(--ok-soft);color:var(--ok)}
+.pill.warn{background:var(--warn-soft);color:var(--warn)}
+.pill.bad{background:var(--bad-soft);color:var(--bad)}
+.figure{background:var(--field-ro);border-bottom:1px solid var(--line);position:relative}
+.figure svg{display:block;width:100%;height:208px}
+.figure figcaption{pointer-events:none}
+.figure figcaption{position:absolute;left:18px;top:11px;font-size:10px;letter-spacing:.9px;text-transform:uppercase;color:var(--faint)}
+.res-body{padding:18px 22px}
+.ring-name{font-size:26px;font-weight:650;letter-spacing:-.6px;line-height:1.25}
+.ring-name small{font-size:15px;font-weight:450;color:var(--dim);letter-spacing:0}
+.ring-sub{color:var(--dim);font-size:12.5px;margin-top:3px}
+.metrics{display:grid;grid-template-columns:repeat(2,1fr);gap:11px;margin:18px 0 0}
+.metric{border:1px solid var(--line);border-radius:8px;padding:11px 12px}
+.metric .m-lab{font-size:11.5px;color:var(--dim);display:flex;justify-content:space-between;gap:6px;align-items:baseline}
+.metric .m-val{font-size:21px;font-weight:640;letter-spacing:-.4px;margin:3px 0 7px}
+.metric .m-val small{font-size:12px;font-weight:450;color:var(--faint);letter-spacing:0}
+.bar{height:5px;border-radius:99px;background:var(--field-ro);position:relative;overflow:hidden}
+.bar i{position:absolute;top:0;bottom:0;border-radius:99px;background:var(--ok)}
+.bar u{position:absolute;top:0;bottom:0;background:rgba(127,140,160,.25);text-decoration:none}
+.metric.warn .bar i{background:var(--warn)}
+.metric.bad .bar i{background:var(--bad)}
+.m-range{font-size:11px;color:var(--faint);margin-top:6px}
+table.res-tab{width:100%;border-collapse:collapse;margin-top:18px;font-size:13px}
+table.res-tab th,table.res-tab td{text-align:left;padding:7px 0;border-bottom:1px solid var(--line);vertical-align:baseline}
+table.res-tab th{font-weight:500;color:var(--dim)}
+table.res-tab td{text-align:right;white-space:nowrap}
+table.res-tab td em{font-style:normal;color:var(--faint);font-size:11.5px}
+.checks{margin-top:18px;display:grid;gap:8px}
+.ck{display:flex;gap:9px;align-items:flex-start;font-size:12.5px;line-height:1.5;padding:9px 11px;border-radius:7px}
+.ck.ok{background:var(--ok-soft);color:var(--ok)}
+.ck.warn{background:var(--warn-soft);color:var(--warn)}
+.ck.bad{background:var(--bad-soft);color:var(--bad)}
+.ck b{flex:none;font-weight:700;width:13px;text-align:center}
+.actions{display:flex;gap:8px;margin-top:18px;flex-wrap:wrap}
+.empty{padding:26px 22px;color:var(--dim);font-size:13.5px}
+
+/* ---------- forklaring ---------- */
+.explain{padding:8px 0 56px}
+.explain-head{max-width:660px;margin:26px 0 26px}
+.explain-head h2{font-size:clamp(22px,3vw,28px);letter-spacing:-.7px;margin:0 0 10px;font-weight:680}
+.explain-head p{color:var(--dim);margin:0}
+.topics{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:16px}
+.topic{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:20px 22px;box-shadow:var(--shadow)}
+.topic h3{font-size:15px;margin:0 0 4px;font-weight:640;letter-spacing:-.2px}
+.topic .lead{color:var(--accent-ink);font-size:11.5px;font-weight:650;letter-spacing:.7px;text-transform:uppercase;margin:0 0 9px}
+.topic p{margin:0 0 10px;font-size:13.5px;color:var(--dim)}
+.topic p:last-child{margin-bottom:0}
+.topic strong{color:var(--ink);font-weight:600}
+.topic ul{margin:0 0 10px;padding-left:18px;font-size:13.5px;color:var(--dim)}
+.topic li{margin-bottom:5px}
+.topic li:last-child{margin-bottom:0}
+.rule{display:flex;gap:10px;align-items:baseline;background:var(--field-ro);border-radius:7px;padding:10px 12px;margin:0 0 12px;font-size:13px}
+.rule b{color:var(--accent-ink);font-weight:650;white-space:nowrap}
+.rule span{color:var(--dim)}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12.5px;background:var(--field-ro);padding:1px 5px;border-radius:4px}
+.tbl-scroll{overflow-x:auto;margin:0 -22px;padding:0 22px}
+table.data{border-collapse:collapse;width:100%;font-size:12.5px;min-width:440px}
+table.data th,table.data td{text-align:left;padding:7px 12px 7px 0;border-bottom:1px solid var(--line);white-space:nowrap}
+table.data th{font-weight:600;color:var(--ink);font-size:11.5px;letter-spacing:.3px;text-transform:uppercase}
+table.data td{color:var(--dim)}
+table.data td:first-child{color:var(--ink)}
+details.method{margin-top:16px;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+details.method>summary{padding:16px 22px;cursor:pointer;font-weight:620;font-size:14px;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:10px}
+details.method>summary::-webkit-details-marker{display:none}
+details.method>summary::after{content:"+";color:var(--faint);font-size:17px}
+details.method[open]>summary::after{content:"–"}
+.method-body{padding:0 22px 20px;font-size:13.5px;color:var(--dim)}
+.method-body p{margin:0 0 11px}
+.method-body p:last-child{margin-bottom:0}
+footer{border-top:1px solid var(--line);color:var(--faint);font-size:12.5px;padding:18px 0 28px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+
+/* ---------- smale skjermer ---------- */
+@media (max-width:620px){
+  .wrap{padding:0 14px}
+  .sect{padding:17px 16px}
+  .res-top{padding:14px 16px}
+  .res-body{padding:16px}
+  .empty{padding:20px 16px}
+  .topic{padding:18px 16px}
+  .tbl-scroll{margin:0 -16px;padding:0 16px}
+  .explain-head{margin:20px 0}
+  details.method>summary{padding:14px 16px}
+  .method-body{padding:0 16px 18px}
+  .dims-head,.dim{grid-template-columns:minmax(68px,1.15fr) minmax(52px,.9fr) 46px 46px 26px;gap:5px}
+  .dim input{height:34px;font-size:13px}
+  .dim input.tol{padding:0 5px;font-size:12px}
+  .lock{width:26px;height:32px}
+  .top-note{display:none}
+  .hero{padding:28px 0 20px}
+  h1{letter-spacing:-.6px}
+}
+@media (max-width:430px){
+  .fields{grid-template-columns:1fr}
+  .metrics{grid-template-columns:1fr}
+  .dims-head{display:none}
+  .dim{grid-template-columns:1fr 48px 48px 26px;row-gap:3px;margin-bottom:12px}
+  .dim label{grid-column:1/-1;margin-bottom:0}
+  .dim input.tol::placeholder{color:var(--faint)}
+  .sect-h{flex-wrap:wrap}
+  .row-between{align-items:flex-start}
+}
+
+@media print{
+  body{background:#fff}
+  header.top,.actions,.btn,footer,.explain{display:none}
+  .grid{grid-template-columns:1fr;gap:12px}
+  .card{box-shadow:none;break-inside:avoid}
+  .res{position:static}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap top-in">
+    <span class="logo"><i></i> O-ringkalkulator</span>
+    <span class="top-note">Alle mål i mm · regner lokalt i nettleseren</span>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="hero">
+    <div class="kicker">Spordimensjonering</div>
+    <h1>Dimensjoner og kontroller <span style="white-space:nowrap">O-ringspor.</span></h1>
+    <p>Velg tetningstype og O-ring, legg inn husmålene, og se klem, sporfylling, strekk og ekstrusjonsgap
+       oppdatert direkte. Toleransene på både ring og spor regnes med.</p>
+  </div>
+
+  <div class="grid">
+    <!-- ============ INNDATA ============ -->
+    <form class="card" id="form" novalidate>
+      <section class="sect">
+        <div class="sect-h"><b>01</b><h2>Tetningstype</h2></div>
+        <div class="types">
+          <button type="button" class="type" data-seal="piston" aria-pressed="true">
+            <svg viewBox="0 0 64 34" fill="none" aria-hidden="true">
+              <rect x="2" y="2" width="60" height="6" rx="1" fill="currentColor" opacity=".18"/>
+              <rect x="2" y="26" width="60" height="6" rx="1" fill="currentColor" opacity=".18"/>
+              <path d="M10 9h44v6H42v4h12v6H10z" fill="currentColor" opacity=".3"/>
+              <circle cx="36" cy="17" r="4.6" fill="none" stroke="currentColor" stroke-width="2"/>
+            </svg>Stempel</button>
+          <button type="button" class="type" data-seal="rod" aria-pressed="false">
+            <svg viewBox="0 0 64 34" fill="none" aria-hidden="true">
+              <path d="M2 2h60v9H44v4h18v9H2z" fill="currentColor" opacity=".18"/>
+              <rect x="2" y="26" width="60" height="6" rx="1" fill="currentColor" opacity=".3"/>
+              <rect x="2" y="19" width="60" height="7" fill="currentColor" opacity=".3"/>
+              <circle cx="50" cy="15" r="4.6" fill="none" stroke="currentColor" stroke-width="2"/>
+            </svg>Stang</button>
+          <button type="button" class="type" data-seal="axial" aria-pressed="false">
+            <svg viewBox="0 0 64 34" fill="none" aria-hidden="true">
+              <rect x="2" y="3" width="60" height="9" rx="1" fill="currentColor" opacity=".18"/>
+              <path d="M2 22h22v-6h16v6h22v9H2z" fill="currentColor" opacity=".3"/>
+              <circle cx="32" cy="17" r="4.6" fill="none" stroke="currentColor" stroke-width="2"/>
+            </svg>Aksialt</button>
+        </div>
+        <div class="row-between">
+          <span style="font-size:12.5px;color:var(--dim)">Bruksmåte</span>
+          <div class="seg">
+            <label><input type="radio" name="app" value="static" checked><span>Statisk</span></label>
+            <label><input type="radio" name="app" value="dynamic" id="dynamic"><span>Dynamisk</span></label>
+          </div>
+        </div>
+        <p class="note" id="seal-note"></p>
+        <div id="dir-wrap" hidden style="margin-top:14px">
+          <label for="dir">Trykkretning</label>
+          <select id="dir">
+            <option value="internal">Innenfra · ringen presses mot ytre sporvegg</option>
+            <option value="external">Utenfra · ringen presses mot indre sporvegg</option>
+          </select>
+        </div>
+      </section>
+
+      <section class="sect">
+        <div class="sect-h"><b>02</b><h2>O-ring</h2></div>
+        <label class="check"><input type="checkbox" id="std" checked> Velg standardstørrelse (AS568 / ISO 3601-1 A)</label>
+        <div class="fields" id="std-fields">
+          <div><label for="cs-sel">Snortykkelse · b</label><select id="cs-sel"></select></div>
+          <div><label for="id-sel">Innvendig diameter · a</label><select id="id-sel"></select></div>
+        </div>
+        <div class="fields" id="custom-fields" hidden>
+          <div><label for="r-id">Innvendig diameter · a</label><div class="unit"><input id="r-id" type="text" inputmode="decimal" data-num data-min="0.1" data-max="2000" data-label="Innvendig diameter"><span>mm</span></div></div>
+          <div><label for="r-cs">Snortykkelse · b</label><div class="unit"><input id="r-cs" type="text" inputmode="decimal" data-num data-min="0.3" data-max="30" data-label="Snortykkelse"><span>mm</span></div></div>
+        </div>
+        <div class="fields" style="margin-top:13px">
+          <div><label for="r-id-tol">Toleranse a · ±</label><div class="unit"><input id="r-id-tol" type="text" inputmode="decimal" data-num data-min="0" data-max="10" data-label="Toleranse innvendig diameter"><span>mm</span></div></div>
+          <div><label for="r-cs-tol">Toleranse b · ±</label><div class="unit"><input id="r-cs-tol" type="text" inputmode="decimal" data-num data-min="0" data-max="5" data-label="Toleranse snortykkelse"><span>mm</span></div></div>
+        </div>
+        <p class="note" id="ring-note"></p>
+      </section>
+
+      <section class="sect">
+        <div class="sect-h"><b>03</b><h2>Hus og spor</h2><span class="spacer"></span>
+          <button type="button" class="btn soft" id="suggest">Foreslå spormål</button></div>
+        <div class="dims-head"><span>Mål</span><span>Nominelt</span><span>+</span><span>−</span><span></span></div>
+        <div id="dims"></div>
+        <p class="note" id="dims-note"></p>
+        <p class="msg" id="msg" role="status" hidden></p>
+      </section>
+
+      <section class="sect">
+        <div class="sect-h"><b>04</b><h2>Drift og materiale</h2></div>
+        <div class="fields">
+          <div><label for="press">Trykk</label><div class="unit"><input id="press" type="text" inputmode="decimal" value="10" data-num data-min="0" data-max="1000" data-label="Trykk"><span>MPa</span></div></div>
+          <div><label for="temp">Driftstemperatur</label><div class="unit"><input id="temp" type="text" inputmode="decimal" value="20" data-num data-min="-100" data-max="350" data-label="Driftstemperatur"><span>°C</span></div></div>
+          <div><label for="mat">Materiale</label><select id="mat"></select></div>
+          <div><label for="hard">Hardhet</label><select id="hard"><option>70</option><option>75</option><option>80</option><option>90</option></select></div>
+          <div><label for="swell">Kjemisk volumendring</label><div class="unit"><input id="swell" type="text" inputmode="decimal" value="0" data-num data-min="-20" data-max="100" data-label="Kjemisk volumendring"><span>%</span></div></div>
+          <div><label for="metal">Hus og motpart</label><select id="metal">
+            <option value="12">Stål · 12 µm/(m·K)</option>
+            <option value="17">Rustfritt · 17 µm/(m·K)</option>
+            <option value="23">Aluminium · 23 µm/(m·K)</option>
+          </select></div>
+          <div><label for="target">Ønsket klem</label><div class="unit"><input id="target" type="text" inputmode="decimal" value="22" data-num data-min="5" data-max="40" data-label="Ønsket klem"><span>%</span></div></div>
+          <div><label for="clear">Diametral klaring</label><div class="unit"><input id="clear" type="text" inputmode="decimal" value="0.08" data-num data-min="0" data-max="3" data-label="Diametral klaring"><span>mm</span></div></div>
+        </div>
+        <p class="note" id="mat-note"></p>
+        <div class="actions"><button type="button" class="btn" id="reset">Tilbakestill eksempel</button></div>
+      </section>
+    </form>
+
+    <!-- ============ RESULTAT ============ -->
+    <div class="res">
+      <section class="card">
+        <div class="res-top"><h2>Resultat</h2><span class="pill" id="verdict"></span></div>
+        <figure class="figure" style="margin:0">
+          <figcaption>Snitt gjennom spor og ring · i skala</figcaption>
+          <svg id="fig" viewBox="0 0 480 208" role="img" aria-label="Skjematisk snitt av O-ring i spor"></svg>
+        </figure>
+        <div class="empty" id="res-error" hidden></div>
+        <div class="res-body" id="res-body">
+          <div class="ring-name" id="ring-name"></div>
+          <div class="ring-sub" id="ring-sub"></div>
+          <div class="metrics" id="metrics"></div>
+          <table class="res-tab"><caption class="sr-only">Spormål og beregnede verdier</caption><tbody id="res-tab"></tbody></table>
+          <div class="checks" id="checks"></div>
+          <div class="actions">
+            <button type="button" class="btn" id="copy">Kopier oppsummering</button>
+            <button type="button" class="btn" id="print">Skriv ut</button>
+          </div>
+          <p class="msg" id="copy-msg" role="status" hidden></p>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- ============ FORKLARING ============ -->
+  <section class="explain">
+    <div class="explain-head">
+      <div class="kicker">Bakgrunn</div>
+      <h2>Hva som er viktig, og hvorfor</h2>
+      <p>En O-ring tetter ikke fordi den ligger i et spor. Den tetter fordi den er klemt sammen,
+         og fordi den har et sted å gjøre av seg når den varmes opp. Her er størrelsene som avgjør
+         om tetningen holder, og hva som skjer når de er feil.</p>
+    </div>
+
+    <div class="topics">
+
+      <article class="topic">
+        <p class="lead">Klem · squeeze</p>
+        <h3>Det er klemmen som tetter</h3>
+        <div class="rule"><b>15–30 %</b><span>statisk &nbsp;·&nbsp; <b>10–20 %</b> dynamisk &nbsp;·&nbsp; minst <b>0,1 mm</b> absolutt</span></div>
+        <p>En O-ring monteres med overmål og presses flat mellom bunnen av sporet og tetteflaten.
+           Gummien ligger da med et <strong>kontakttrykk</strong> mot begge flatene. Så lenge dette
+           kontakttrykket er høyere enn mediets trykk, kommer ikke mediet forbi.</p>
+        <p>Trykket hjelper til: det skyver ringen mot lavtrykkssiden og øker kontakttrykket
+           ytterligere. Derfor er det ved <strong>lavt eller null trykk</strong> at en tetning med
+           for lite klem lekker først, ikke ved maksimalt trykk.</p>
+        <ul>
+          <li><strong>For lite klem</strong> gir lekkasje ved oppstart, ved kulde og etter at gummien har satt seg.</li>
+          <li><strong>For mye klem</strong> gir høy friksjon, varmeutvikling, raskere aldring og permanent deformasjon. Over ca. 30 % faller levetiden merkbart.</li>
+        </ul>
+        <p>Prosent alene er ikke nok. På tynne snorer blir 15 % svært lite i millimeter, og
+           ujevnheter, ovalitet og overflateruhet spiser opp klemmen. Derfor kontrolleres også den
+           absolutte klemmen i mm.</p>
+      </article>
+
+      <article class="topic">
+        <p class="lead">Sporfylling · gland fill</p>
+        <h3>Gummi lar seg ikke presse sammen</h3>
+        <div class="rule"><b>Maks 85 %</b><span>av sporets tverrsnitt, i verste toleransetilfelle</span></div>
+        <p>Gummi er nesten <strong>inkompressibel</strong>. Den har omtrent samme kompressibilitet som
+           vann: den lar seg forme, men ikke presse sammen. Når ringen klemmes flat, må volumet
+           flytte seg sidelengs i sporet. Sporet må derfor være bredere enn ringen er tykk.</p>
+        <p>Fyller ringen hele sporet, oppstår <strong>hydraulisk lås</strong>. Videre oppvarming eller
+           svelling har ingen steder å gå, og trykket i sporet stiger raskt til flere hundre bar.
+           Resultatet er ekstrudert gummi, sprengte spor eller flenser som løftes fra hverandre.</p>
+        <p>Marginen på 15 % er ikke slingringsmonn, den er reservert:</p>
+        <ul>
+          <li><strong>Varmeutvidelse.</strong> Gummi utvider seg 9–20 ganger mer enn stål. 100 °C gir 3–8 % volumøkning, avhengig av blanding.</li>
+          <li><strong>Kjemisk svelling</strong> i mediet, ofte 2–10 %.</li>
+          <li><strong>Toleranser</strong> på både snortykkelse og spor.</li>
+        </ul>
+        <p>Er sporet derimot altfor romslig, under ca. 50 % fylling, kan ringen rulle og vri seg.
+           Ved frem- og tilbakegående bevegelse er det en kjent årsak til spiralbrudd.</p>
+      </article>
+
+      <article class="topic">
+        <p class="lead">Strekk og kompresjon</p>
+        <h3>Strekk stjeler klem</h3>
+        <div class="rule"><b>Maks 5 %</b><span>strekk på innvendig diameter &nbsp;·&nbsp; <b>maks 3 %</b> kompresjon av ytre diameter</span></div>
+        <p>Strekker du en O-ring rundt et stempel, blir den <strong>tynnere</strong>. Volumet er
+           konstant, så det som blir lengre må bli smalere. 5 % strekk reduserer snortykkelsen med
+           omtrent 2 %, og den klemmen forsvinner fra regnestykket.</p>
+        <p>Denne kalkulatoren regner ut den faktiske snortykkelsen etter montering ved å bevare
+           ringens volum, og bruker den i klemberegningen. Derfor blir klemmen litt lavere enn
+           en enkel <code>(b − h) / b</code> ville gitt.</p>
+        <p>Strekk gir også <strong>permanent strekkspenning</strong> i gummien hele levetiden.
+           Det akselererer aldring og ozonsprekker, særlig i NBR.</p>
+        <p>Motsatt vei, ved stangtetninger, presses ringen sammen på utsiden for å bli liggende i
+           sporet. Presses den for mye, <strong>bukler</strong> den og legger seg i bølger, og da
+           lekker den langs bølgedalene.</p>
+      </article>
+
+      <article class="topic">
+        <p class="lead">Ekstrusjonsgap</p>
+        <h3>Spalten ringen skal presses inn i</h3>
+        <div class="rule"><b>Gap × trykk</b><span>er den kritiske kombinasjonen, ikke gapet alene</span></div>
+        <p>Mellom stempel og sylinder, eller mellom stang og hus, er det alltid en klaring.
+           Under trykk presses gummien inn i denne spalten. Klarer den ikke å holde igjen, blir
+           ringen <strong>nappet i stykker</strong> i kanten, litt for hver trykksyklus.</p>
+        <p>Hvor mye som tåles avhenger av fire ting:</p>
+        <ul>
+          <li><strong>Trykket.</strong> Tålt gap faller omtrent omvendt proporsjonalt med trykket.</li>
+          <li><strong>Hardheten.</strong> 90 Shore A tåler flere ganger større gap enn 70 Shore A.</li>
+          <li><strong>Temperaturen.</strong> Varm gummi er mykere og ekstruderer lettere.</li>
+          <li><strong>Eksentrisitet.</strong> Klaringen samler seg på én side. Regn alltid med hele den diametrale klaringen på verste sted.</li>
+        </ul>
+        <p>Blir gapet for stort, er rekkefølgen på tiltak: strammere pasning, hardere blanding,
+           og til slutt <strong>støttering</strong> på lavtrykkssiden. Støttering krever bredere spor.</p>
+      </article>
+
+      <article class="topic">
+        <p class="lead">Temperatur</p>
+        <h3>Kulde lekker, varme sliter</h3>
+        <p>Ved <strong>lav temperatur</strong> trekker gummien seg sammen og blir stivere. Både
+           klemmen og evnen til å følge etter ujevnheter forsvinner. Nedre brukstemperatur ligger
+           typisk 8–15 °C over glassovergangen, og ved raske trykkfall kan tetningen lekke lenge før
+           gummien er teknisk «frossen».</p>
+        <p>Ved <strong>høy temperatur</strong> går det motsatt vei. Gummien utvider seg mer enn
+           metallet rundt, klemmen og sporfyllingen øker, og materialet eldes raskere. Tommelfingerregelen
+           er at hver 10 °C omtrent halverer levetiden.</p>
+        <div class="tbl-scroll">
+          <table class="data">
+            <thead><tr><th>Materiale</th><th>Område</th><th>Typisk bruk</th></tr></thead>
+            <tbody>
+              <tr><td>NBR</td><td>−30 … +100 °C</td><td>Mineralolje, hydraulikk, luft</td></tr>
+              <tr><td>HNBR</td><td>−30 … +150 °C</td><td>Som NBR, høyere varme og slitasje</td></tr>
+              <tr><td>FKM</td><td>−20 … +200 °C</td><td>Varm olje, drivstoff, kjemikalier</td></tr>
+              <tr><td>EPDM</td><td>−45 … +150 °C</td><td>Vann, damp, bremsevæske. Ikke mineralolje</td></tr>
+              <tr><td>VMQ</td><td>−55 … +200 °C</td><td>Statisk, stort temperaturspenn. Svak mekanisk</td></tr>
+              <tr><td>FFKM</td><td>−15 … +300 °C</td><td>Aggressiv kjemi, halvleder. Kostbart</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="note">Veiledende for vanlige blandinger. Den konkrete blandingen og mediet avgjør,
+           og kombinasjonen medium + temperatur + trykk må kontrolleres hos leverandøren.</p>
+      </article>
+
+      <article class="topic">
+        <p class="lead">Kompresjonssett</p>
+        <h3>Ringen får aldri formen tilbake</h3>
+        <p>Holdes gummi sammenpresset over tid, kommer den ikke helt tilbake. Andelen som blir
+           borte kalles <strong>kompresjonssett</strong>, og den vokser med temperatur og tid.
+           Et sett på 50 % betyr at halve den opprinnelige klemmen er tapt.</p>
+        <p>Det er den viktigste grunnen til at tetninger lekker etter måneder i drift og ikke
+           ved idriftsettelse. Praktisk konsekvens: legg klemmen i <strong>øvre halvdel</strong> av
+           det anbefalte området når tetningen skal stå varmt og lenge, og velg en blanding med lav
+           settverdi framfor å øke klemmen ytterligere.</p>
+        <p>Trykk hjelper: en O-ring med lite gjenværende klem kan fortsatt tette under trykk,
+           men lekker ved avlastning og i kulde. Derfor er det ved <strong>oppstart etter stillstand</strong>
+           problemet viser seg.</p>
+      </article>
+
+      <article class="topic">
+        <p class="lead">Overflate og montering</p>
+        <h3>Sporet ødelegger flere ringer enn beregningen</h3>
+        <ul>
+          <li><strong>Ruhet på tetteflaten.</strong> Dynamisk 0,1–0,4 µm Ra, statisk opp til 0,8–1,6 µm Ra.
+              Bunnen og sidene av sporet tåler 1,6–3,2 µm Ra.</li>
+          <li><strong>For blank flate er også galt</strong> ved bevegelse. Under ca. 0,05 µm Ra holder ikke
+              smørefilmen seg, og friksjonen øker.</li>
+          <li><strong>Sporhjørner</strong> avrundes med 0,1–0,3 mm. Skarpe hjørner kutter ringen ved trykkstøt.</li>
+          <li><strong>Sporsider</strong> lages loddrette eller med inntil 5° helning. Brattere spor slipper ringen.</li>
+          <li><strong>Innføringsfas</strong> 15–20° på alt ringen skal tres over, og fjern gjenger, kanter og
+              tverrhull i monteringsbanen eller dekk dem til.</li>
+          <li><strong>Smør ved montering</strong> med et medium ringen tåler. Tørrmontering river opp overflaten.</li>
+        </ul>
+        <p>Én ripe på tvers av tetteflaten er nok. Ringen kan ikke fylle et spor som er dypere
+           enn den elastiske deformasjonen rekker.</p>
+      </article>
+
+      <article class="topic">
+        <p class="lead">Statisk og dynamisk</p>
+        <h3>Bevegelse endrer alle kravene</h3>
+        <p>En <strong>statisk</strong> tetning er en pakning. Her er målet maksimal sikkerhet mot
+           lekkasje, og høy klem koster lite.</p>
+        <p>En <strong>dynamisk</strong> tetning må i tillegg gli. Klemmen holdes lavere, 10–20 %,
+           fordi friksjonen, varmen og slitasjen vokser raskt med klemmen. Aktuelle feilmåter:</p>
+        <ul>
+          <li><strong>Spiralbrudd.</strong> Ringen ruller i stedet for å gli, og vris i stykker. Skjer ved
+              lang slaglengde, lav hastighet og for bredt spor. Snorer tykkere enn 3 mm er mest utsatt.</li>
+          <li><strong>Stick-slip.</strong> Rykkvis bevegelse ved lav hastighet, fordi friksjonen faller når
+              bevegelsen først starter.</li>
+          <li><strong>Tørrkjøring</strong> ved oppstart etter stillstand, når smørefilmen er presset bort.</li>
+        </ul>
+        <p>Til <strong>roterende</strong> bevegelse gjelder egne regler. Gummien varmes opp og utvider seg
+           mot akselen, noe som øker friksjonen ytterligere, og dette verktøyet dekker ikke det tilfellet.</p>
+      </article>
+
+      <article class="topic">
+        <p class="lead">Toleranser</p>
+        <h3>Det er ytterpunktene som lekker</h3>
+        <p>Et spor som er perfekt på nominelle mål kan være ubrukelig i produksjon. Derfor regnes
+           alle kombinasjoner av øvre og nedre grense for ring og spor, både ved montering og i drift.
+           Verdien du skal se på er <strong>intervallet</strong>, ikke det nominelle tallet.</p>
+        <p>Ringens egne toleranser er ofte den største bidragsyteren, og de er relativt sett
+           <strong>størst på små ringer</strong>. En ring på 3,7 mm innvendig diameter har etter AS568 en
+           toleranse på ±0,13 mm, altså ±3,5 %. Samme toleranse på en ring på 100 mm er ±0,3 %.</p>
+        <p>Praktisk følge: på små ringer kan strekk og klem havne utenfor anbefalt område bare på
+           grunn av ringtoleransen, uansett hvor nøyaktig sporet lages. Da må du enten stramme inn
+           kravet til ringen, velge en større snortykkelse, eller akseptere et bredere vindu bevisst.</p>
+      </article>
+
+      <article class="topic">
+        <p class="lead">Rekkefølge</p>
+        <h3>Slik henger valgene sammen</h3>
+        <ol style="margin:0 0 10px;padding-left:18px;font-size:13.5px;color:var(--dim)">
+          <li>Velg <strong>snortykkelse</strong> først. Tykkere snor tåler mer slitasje, større toleranser og
+              høyere sett, men krever mer plass og gir mer friksjon.</li>
+          <li>Velg <strong>diameter</strong> slik at strekket blir lite. Stempel: ringens innvendige diameter
+              like under sporbunnen. Stang: ringens ytterdiameter like over sporbunnen.</li>
+          <li>Sett <strong>spordybden</strong> fra ønsket klem.</li>
+          <li>Sett <strong>sporbredden</strong> fra sporfyllingen, med margin for varme og svelling.</li>
+          <li>Kontroller <strong>klaringen</strong> mot trykk og hardhet, og legg inn støttering om nødvendig.</li>
+          <li>Kontroller <strong>materialet</strong> mot medium, temperatur og trykk.</li>
+        </ol>
+        <p>Knappen «Foreslå spormål» gjør punkt 3 til 5 for deg. Lås målene du allerede har låst i
+           konstruksjonen, så beholdes de.</p>
+      </article>
+
+    </div>
+
+    <details class="method">
+      <summary>Forutsetninger, formler og kilder</summary>
+      <div class="method-body">
+        <p><strong>Betegnelser.</strong> <code>a</code> ringens innvendige diameter, <code>b</code> snortykkelse,
+           <code>c</code> boring eller sylinderdiameter, <code>d</code> stempel- eller stangdiameter,
+           <code>e</code> sporbunndiameter, <code>L</code> sporbredde. Aksialt er <code>c</code> og <code>d</code>
+           sporets indre og ytre diameter, <code>e</code> spordybden og <code>L</code> flensspalten.</p>
+        <p><strong>Sporhøyde.</strong> Stempel <code>h = (c − e)/2</code>, stang <code>h = (e − d)/2</code>,
+           aksialt <code>h = e</code>.</p>
+        <p><strong>Effektiv snortykkelse.</strong> Ringens volum <code>V = π²·b²·(a + b)/4</code> holdes konstant
+           ved montering. Den effektive snortykkelsen <code>b'</code> ved den aktuelle sporveggen løses av
+           <code>b'²·(D + b') = b²·(a + b)</code> ved innvendig tilpasning og <code>b'²·(D − b') = b²·(a + b)</code>
+           ved utvendig, der <code>D</code> er sporbunndiameteren ringen legger seg mot. Dette er en geometrisk
+           tilnærming til at strekk gjør snoren tynnere, ikke en materialmodell.</p>
+        <p><strong>Klem.</strong> <code>100 · (b' − h) / b'</code>. Absolutt klem <code>b' − h</code> kontrolleres mot
+           0,13 mm statisk og 0,10 mm dynamisk.</p>
+        <p><strong>Sporfylling.</strong> Ringvolum delt på sporets ringformede volum,
+           <code>π·(c² − e²)·L/4</code> for stempel, <code>π·(e² − d²)·L/4</code> for stang og
+           <code>π·(d² − c²)·e/4</code> aksialt. Volumformen tar med at ringen og sporet ligger på litt ulik
+           middeldiameter, noe en ren arealberegning ikke gjør.</p>
+        <p><strong>Strekk.</strong> Innvendig <code>100·(D/a − 1)</code>, utvendig som reduksjon av fri
+           ytterdiameter <code>100·(1 − D/(a + 2b))</code>.</p>
+        <p><strong>Toleranser.</strong> Alle 64 kombinasjoner av ytterpunkter for ring og de fire spormålene
+           regnes, både ved montering (20 °C, ingen svelling) og ved oppgitt drift. Viste intervaller er
+           ytterpunktene av dette.</p>
+        <p><strong>Temperatur og svelling.</strong> Lineær utvidelse med α = 112 / 120 / 162 / 160 / 250 / 150
+           µm/(m·K) for NBR / HNBR / FKM / EPDM / VMQ / FFKM, og 12 / 17 / 23 for stål / rustfritt / aluminium.
+           Kjemisk volumendring gir lengdefaktor <code>∛(1 + ΔV/100)</code>. Koeffisientene er omtrentlige og
+           varierer mellom blandinger.</p>
+        <p><strong>Ekstrusjonsgrense.</strong> Veiledende kurve <code>g = K / p^n</code> med
+           (K, n) = (2,06 · 1,00), (2,10 · 0,80) og (2,21 · 0,63) for 70, 80 og 90 Shore A, uten støttering,
+           begrenset oppad til 0,40 mm. Kurven er tilpasset formen på de klassiske ekstrusjonsdiagrammene og
+           er ment som en tidlig kontroll. <strong>Kontroller alltid mot leverandørens eget diagram</strong>,
+           som også tar hensyn til snortykkelse og temperatur.</p>
+        <p><strong>Vurderingsgrenser.</strong> Klem 15–30 % statisk og 10–20 % dynamisk, sporfylling maks 85 %,
+           strekk 0–5 % innvendig og 0–3 % utvendig. Dette er vanlige konstruksjonsanbefalinger, ikke krav fra
+           en standard. Leverandørens grenser kan avvike.</p>
+        <p><strong>Ikke modellert.</strong> Kompresjonssett over tid, friksjon, eksentrisitet, ovalitet,
+           overflateruhet, gassgjennomtrengning, deformasjon av huset under trykk, spiralbrudd og roterende
+           bevegelse. Beregningen er geometrisk, og er ingen samsvarskontroll mot ISO 3601-2.</p>
+        <p><strong>Dimensjonsdata.</strong> 349 AS568-størrelser med toleranser fra
+           <a href="https://www.trelleborg.com/en/seals/-/media/tss-media-repository/tss_website/pdf-and-other-literature/catalogs/as568_o-rings_en.pdf" target="_blank" rel="noopener noreferrer">Trelleborg, AS568 O-Rings</a>
+           (seriene 001–050, 102–178, 201–284, 309–395 og 425–475).
+           Konstruksjonsgrunnlag: <a href="https://www.parker.com/content/dam/Parker-com/Literature/Praedifa/Catalogs/Catalog_O-Ring-Handbook_PTD5705-EN.pdf" target="_blank" rel="noopener noreferrer">Parker O-Ring Handbook</a>.
+           Arbeidsflyten er inspirert av <a href="https://engitoolbox.org/calculators/oring-calculator" target="_blank" rel="noopener noreferrer">EngiToolbox sin O-ringkalkulator</a>;
+           beregningsmodellen og koden her er egen.</p>
+      </div>
+    </details>
+  </section>
+
+  <footer>
+    <span>Én HTML-fil. Ingen innlogging, ingen sporing, alt regnes lokalt.</span>
+    <span>mm · MPa · °C · Shore A</span>
+  </footer>
+</main>
+
+<script>
+'use strict';
+
+/* AS568 / ISO 3601-1 klasse A: [nr, innvendig diameter, snortykkelse,
+   ID-toleranse, snortoleranse] i mm. Kilde: Trelleborg, AS568 O-Rings.
+   Tabellen ligger i filen, slik at siden virker uten nett. */
+const SIZES = [
+[1,0.74,1.02,0.1,0.08],
+      [2,1.07,1.27,0.1,0.08],
+      [3,1.42,1.52,0.1,0.08],
+      [4,1.78,1.78,0.13,0.08],
+      [5,2.57,1.78,0.13,0.08],
+      [6,2.9,1.78,0.13,0.08],
+      [7,3.68,1.78,0.13,0.08],
+      [8,4.47,1.78,0.13,0.08],
+      [9,5.28,1.78,0.13,0.08],
+      [10,6.07,1.78,0.13,0.08],
+      [11,7.65,1.78,0.13,0.08],
+      [12,9.25,1.78,0.13,0.08],
+      [13,10.82,1.78,0.13,0.08],
+      [14,12.42,1.78,0.13,0.08],
+      [15,14.0,1.78,0.18,0.08],
+      [16,15.6,1.78,0.23,0.08],
+      [17,17.17,1.78,0.23,0.08],
+      [18,18.77,1.78,0.23,0.08],
+      [19,20.35,1.78,0.23,0.08],
+      [20,21.95,1.78,0.23,0.08],
+      [21,23.52,1.78,0.23,0.08],
+      [22,25.12,1.78,0.25,0.08],
+      [23,26.7,1.78,0.25,0.08],
+      [24,28.3,1.78,0.25,0.08],
+      [25,29.87,1.78,0.28,0.08],
+      [26,31.47,1.78,0.28,0.08],
+      [27,33.05,1.78,0.28,0.08],
+      [28,34.65,1.78,0.33,0.08],
+      [29,37.82,1.78,0.33,0.08],
+      [30,41.0,1.78,0.33,0.08],
+      [31,44.17,1.78,0.38,0.08],
+      [32,47.35,1.78,0.38,0.08],
+      [33,50.52,1.78,0.46,0.08],
+      [34,53.7,1.78,0.46,0.08],
+      [35,56.87,1.78,0.46,0.08],
+      [36,60.05,1.78,0.46,0.08],
+      [37,63.22,1.78,0.46,0.08],
+      [38,66.4,1.78,0.51,0.08],
+      [39,69.57,1.78,0.51,0.08],
+      [40,72.75,1.78,0.51,0.08],
+      [41,75.92,1.78,0.61,0.08],
+      [42,82.27,1.78,0.61,0.08],
+      [43,88.62,1.78,0.61,0.08],
+      [44,94.97,1.78,0.69,0.08],
+      [45,101.32,1.78,0.69,0.08],
+      [46,107.67,1.78,0.76,0.08],
+      [47,114.02,1.78,0.76,0.08],
+      [48,120.37,1.78,0.76,0.08],
+      [49,126.72,1.78,0.94,0.08],
+      [50,133.07,1.78,0.94,0.08],
+      [102,1.24,2.62,0.13,0.08],
+      [103,2.06,2.62,0.13,0.08],
+      [104,2.84,2.62,0.13,0.08],
+      [105,3.63,2.62,0.13,0.08],
+      [106,4.42,2.62,0.13,0.08],
+      [107,5.23,2.62,0.13,0.08],
+      [108,6.02,2.62,0.13,0.08],
+      [109,7.59,2.62,0.13,0.08],
+      [110,9.19,2.62,0.13,0.08],
+      [111,10.77,2.62,0.13,0.08],
+      [112,12.37,2.62,0.13,0.08],
+      [113,13.94,2.62,0.18,0.08],
+      [114,15.54,2.62,0.23,0.08],
+      [115,17.12,2.62,0.23,0.08],
+      [116,18.72,2.62,0.23,0.08],
+      [117,20.29,2.62,0.25,0.08],
+      [118,21.89,2.62,0.25,0.08],
+      [119,23.47,2.62,0.25,0.08],
+      [120,25.07,2.62,0.25,0.08],
+      [121,26.64,2.62,0.25,0.08],
+      [122,28.24,2.62,0.25,0.08],
+      [123,29.82,2.62,0.3,0.08],
+      [124,31.42,2.62,0.3,0.08],
+      [125,32.99,2.62,0.3,0.08],
+      [126,34.59,2.62,0.3,0.08],
+      [127,36.17,2.62,0.3,0.08],
+      [128,37.77,2.62,0.3,0.08],
+      [129,39.34,2.62,0.38,0.08],
+      [130,40.94,2.62,0.38,0.08],
+      [131,42.52,2.62,0.38,0.08],
+      [132,44.12,2.62,0.38,0.08],
+      [133,45.69,2.62,0.38,0.08],
+      [134,47.29,2.62,0.38,0.08],
+      [135,48.9,2.62,0.43,0.08],
+      [136,50.47,2.62,0.43,0.08],
+      [137,52.07,2.62,0.43,0.08],
+      [138,53.64,2.62,0.43,0.08],
+      [139,55.25,2.62,0.43,0.08],
+      [140,56.82,2.62,0.43,0.08],
+      [141,58.42,2.62,0.51,0.08],
+      [142,59.99,2.62,0.51,0.08],
+      [143,61.6,2.62,0.51,0.08],
+      [144,63.17,2.62,0.51,0.08],
+      [145,64.77,2.62,0.51,0.08],
+      [146,66.34,2.62,0.51,0.08],
+      [147,67.95,2.62,0.56,0.08],
+      [148,69.52,2.62,0.56,0.08],
+      [149,71.12,2.62,0.56,0.08],
+      [150,72.69,2.62,0.56,0.08],
+      [151,75.87,2.62,0.61,0.08],
+      [152,82.22,2.62,0.61,0.08],
+      [153,88.57,2.62,0.61,0.08],
+      [154,94.92,2.62,0.71,0.08],
+      [155,101.27,2.62,0.71,0.08],
+      [156,107.62,2.62,0.76,0.08],
+      [157,113.97,2.62,0.76,0.08],
+      [158,120.32,2.62,0.76,0.08],
+      [159,126.67,2.62,0.89,0.08],
+      [160,133.02,2.62,0.89,0.08],
+      [161,139.37,2.62,0.89,0.08],
+      [162,145.72,2.62,0.89,0.08],
+      [163,152.07,2.62,0.89,0.08],
+      [164,158.42,2.62,1.02,0.08],
+      [165,164.77,2.62,1.02,0.08],
+      [166,171.12,2.62,1.02,0.08],
+      [167,177.47,2.62,1.02,0.08],
+      [168,183.82,2.62,1.14,0.08],
+      [169,190.17,2.62,1.14,0.08],
+      [170,196.52,2.62,1.14,0.08],
+      [171,202.87,2.62,1.14,0.08],
+      [172,209.22,2.62,1.27,0.08],
+      [173,215.57,2.62,1.27,0.08],
+      [174,221.92,2.62,1.27,0.08],
+      [175,228.27,2.62,1.27,0.08],
+      [176,234.62,2.62,1.4,0.08],
+      [177,240.97,2.62,1.4,0.08],
+      [178,247.32,2.62,1.4,0.08],
+      [201,4.34,3.53,0.13,0.1],
+      [202,5.94,3.53,0.13,0.1],
+      [203,7.52,3.53,0.13,0.1],
+      [204,9.12,3.53,0.13,0.1],
+      [205,10.69,3.53,0.13,0.1],
+      [206,12.29,3.53,0.13,0.1],
+      [207,13.87,3.53,0.18,0.1],
+      [208,15.47,3.53,0.23,0.1],
+      [209,17.04,3.53,0.23,0.1],
+      [210,18.64,3.53,0.25,0.1],
+      [211,20.22,3.53,0.25,0.1],
+      [212,21.82,3.53,0.25,0.1],
+      [213,23.39,3.53,0.25,0.1],
+      [214,24.99,3.53,0.25,0.1],
+      [215,26.57,3.53,0.25,0.1],
+      [216,28.17,3.53,0.3,0.1],
+      [217,29.74,3.53,0.3,0.1],
+      [218,31.34,3.53,0.3,0.1],
+      [219,32.92,3.53,0.3,0.1],
+      [220,34.52,3.53,0.3,0.1],
+      [221,36.09,3.53,0.3,0.1],
+      [222,37.69,3.53,0.38,0.1],
+      [223,40.87,3.53,0.38,0.1],
+      [224,44.04,3.53,0.38,0.1],
+      [225,47.22,3.53,0.46,0.1],
+      [226,50.39,3.53,0.46,0.1],
+      [227,53.57,3.53,0.46,0.1],
+      [228,56.74,3.53,0.51,0.1],
+      [229,59.92,3.53,0.51,0.1],
+      [230,63.09,3.53,0.51,0.1],
+      [231,66.27,3.53,0.51,0.1],
+      [232,69.44,3.53,0.61,0.1],
+      [233,72.62,3.53,0.61,0.1],
+      [234,75.79,3.53,0.61,0.1],
+      [235,78.97,3.53,0.61,0.1],
+      [236,82.14,3.53,0.61,0.1],
+      [237,85.32,3.53,0.61,0.1],
+      [238,88.49,3.53,0.61,0.1],
+      [239,91.67,3.53,0.71,0.1],
+      [240,94.84,3.53,0.71,0.1],
+      [241,98.02,3.53,0.71,0.1],
+      [242,101.19,3.53,0.71,0.1],
+      [243,104.37,3.53,0.71,0.1],
+      [244,107.54,3.53,0.76,0.1],
+      [245,110.72,3.53,0.76,0.1],
+      [246,113.89,3.53,0.76,0.1],
+      [247,117.07,3.53,0.76,0.1],
+      [248,120.24,3.53,0.76,0.1],
+      [249,123.42,3.53,0.89,0.1],
+      [250,126.59,3.53,0.89,0.1],
+      [251,129.77,3.53,0.89,0.1],
+      [252,132.94,3.53,0.89,0.1],
+      [253,136.12,3.53,0.89,0.1],
+      [254,139.29,3.53,0.89,0.1],
+      [255,142.47,3.53,0.89,0.1],
+      [256,145.64,3.53,0.89,0.1],
+      [257,148.82,3.53,0.89,0.1],
+      [258,151.99,3.53,0.89,0.1],
+      [259,158.34,3.53,1.02,0.1],
+      [260,164.69,3.53,1.02,0.1],
+      [261,171.04,3.53,1.02,0.1],
+      [262,177.39,3.53,1.02,0.1],
+      [263,183.74,3.53,1.14,0.1],
+      [264,190.09,3.53,1.14,0.1],
+      [265,196.44,3.53,1.14,0.1],
+      [266,202.79,3.53,1.14,0.1],
+      [267,209.14,3.53,1.27,0.1],
+      [268,215.49,3.53,1.27,0.1],
+      [269,221.84,3.53,1.27,0.1],
+      [270,228.19,3.53,1.27,0.1],
+      [271,234.54,3.53,1.4,0.1],
+      [272,240.89,3.53,1.4,0.1],
+      [273,247.24,3.53,1.4,0.1],
+      [274,253.59,3.53,1.4,0.1],
+      [275,266.29,3.53,1.4,0.1],
+      [276,278.99,3.53,1.65,0.1],
+      [277,291.69,3.53,1.65,0.1],
+      [278,304.39,3.53,1.65,0.1],
+      [279,329.79,3.53,1.65,0.1],
+      [280,355.19,3.53,1.65,0.1],
+      [281,380.59,3.53,1.65,0.1],
+      [282,405.26,3.53,1.91,0.1],
+      [283,430.66,3.53,2.03,0.1],
+      [284,456.06,3.53,2.16,0.1],
+      [309,10.46,5.33,0.13,0.13],
+      [310,12.07,5.33,0.13,0.13],
+      [311,13.64,5.33,0.18,0.13],
+      [312,15.24,5.33,0.23,0.13],
+      [313,16.81,5.33,0.23,0.13],
+      [314,18.42,5.33,0.25,0.13],
+      [315,19.99,5.33,0.25,0.13],
+      [316,21.59,5.33,0.25,0.13],
+      [317,23.16,5.33,0.25,0.13],
+      [318,24.77,5.33,0.25,0.13],
+      [319,26.34,5.33,0.25,0.13],
+      [320,27.94,5.33,0.3,0.13],
+      [321,29.51,5.33,0.3,0.13],
+      [322,31.12,5.33,0.3,0.13],
+      [323,32.69,5.33,0.3,0.13],
+      [324,34.29,5.33,0.3,0.13],
+      [325,37.47,5.33,0.38,0.13],
+      [326,40.64,5.33,0.38,0.13],
+      [327,43.82,5.33,0.38,0.13],
+      [328,46.99,5.33,0.38,0.13],
+      [329,50.17,5.33,0.46,0.13],
+      [330,53.34,5.33,0.46,0.13],
+      [331,56.52,5.33,0.46,0.13],
+      [332,59.69,5.33,0.46,0.13],
+      [333,62.87,5.33,0.51,0.13],
+      [334,66.04,5.33,0.51,0.13],
+      [335,69.22,5.33,0.51,0.13],
+      [336,72.39,5.33,0.51,0.13],
+      [337,75.57,5.33,0.61,0.13],
+      [338,78.74,5.33,0.61,0.13],
+      [339,81.92,5.33,0.61,0.13],
+      [340,85.09,5.33,0.61,0.13],
+      [341,88.27,5.33,0.61,0.13],
+      [342,91.44,5.33,0.71,0.13],
+      [343,94.62,5.33,0.71,0.13],
+      [344,97.79,5.33,0.71,0.13],
+      [345,100.97,5.33,0.71,0.13],
+      [346,104.14,5.33,0.71,0.13],
+      [347,107.32,5.33,0.76,0.13],
+      [348,110.49,5.33,0.76,0.13],
+      [349,113.67,5.33,0.76,0.13],
+      [350,116.84,5.33,0.76,0.13],
+      [351,120.02,5.33,0.76,0.13],
+      [352,123.19,5.33,0.76,0.13],
+      [353,126.37,5.33,0.94,0.13],
+      [354,129.54,5.33,0.94,0.13],
+      [355,132.72,5.33,0.94,0.13],
+      [356,135.89,5.33,0.94,0.13],
+      [357,139.07,5.33,0.94,0.13],
+      [358,142.24,5.33,0.94,0.13],
+      [359,145.42,5.33,0.94,0.13],
+      [360,148.59,5.33,0.94,0.13],
+      [361,151.77,5.33,0.94,0.13],
+      [362,158.12,5.33,1.02,0.13],
+      [363,164.47,5.33,1.02,0.13],
+      [364,170.82,5.33,1.02,0.13],
+      [365,177.17,5.33,1.02,0.13],
+      [366,183.52,5.33,1.14,0.13],
+      [367,189.87,5.33,1.14,0.13],
+      [368,196.22,5.33,1.14,0.13],
+      [369,202.57,5.33,1.14,0.13],
+      [370,208.92,5.33,1.27,0.13],
+      [371,215.27,5.33,1.27,0.13],
+      [372,221.62,5.33,1.27,0.13],
+      [373,227.97,5.33,1.27,0.13],
+      [374,234.32,5.33,1.4,0.13],
+      [375,240.67,5.33,1.4,0.13],
+      [376,247.02,5.33,1.4,0.13],
+      [377,253.37,5.33,1.4,0.13],
+      [378,266.07,5.33,1.52,0.13],
+      [379,278.77,5.33,1.52,0.13],
+      [380,291.47,5.33,1.65,0.13],
+      [381,304.17,5.33,1.65,0.13],
+      [382,329.57,5.33,1.65,0.13],
+      [383,354.97,5.33,1.78,0.13],
+      [384,380.37,5.33,1.78,0.13],
+      [385,405.26,5.33,1.91,0.13],
+      [386,430.66,5.33,2.03,0.13],
+      [387,456.06,5.33,2.16,0.13],
+      [388,481.46,5.33,2.29,0.13],
+      [389,506.86,5.33,2.41,0.13],
+      [390,532.26,5.33,2.41,0.13],
+      [391,557.66,5.33,2.54,0.13],
+      [392,582.68,5.33,2.67,0.13],
+      [393,608.08,5.33,2.79,0.13],
+      [394,633.48,5.33,2.92,0.13],
+      [395,658.88,5.33,3.05,0.13],
+      [425,113.67,6.99,0.84,0.15],
+      [426,116.84,6.99,0.84,0.15],
+      [427,120.02,6.99,0.84,0.15],
+      [428,123.19,6.99,0.84,0.15],
+      [429,126.37,6.99,0.94,0.15],
+      [430,129.54,6.99,0.94,0.15],
+      [431,132.72,6.99,0.94,0.15],
+      [432,135.89,6.99,0.94,0.15],
+      [433,139.07,6.99,0.94,0.15],
+      [434,142.24,6.99,0.94,0.15],
+      [435,145.42,6.99,0.94,0.15],
+      [436,148.59,6.99,0.94,0.15],
+      [437,151.77,6.99,0.94,0.15],
+      [438,158.12,6.99,1.02,0.15],
+      [439,164.47,6.99,1.02,0.15],
+      [440,170.82,6.99,1.02,0.15],
+      [441,177.17,6.99,1.02,0.15],
+      [442,183.52,6.99,1.14,0.15],
+      [443,189.87,6.99,1.14,0.15],
+      [444,196.22,6.99,1.14,0.15],
+      [445,202.57,6.99,1.14,0.15],
+      [446,215.27,6.99,1.4,0.15],
+      [447,227.97,6.99,1.4,0.15],
+      [448,240.67,6.99,1.4,0.15],
+      [449,253.37,6.99,1.4,0.15],
+      [450,266.07,6.99,1.52,0.15],
+      [451,278.77,6.99,1.52,0.15],
+      [452,291.47,6.99,1.52,0.15],
+      [453,304.17,6.99,1.52,0.15],
+      [454,316.87,6.99,1.52,0.15],
+      [455,329.57,6.99,1.52,0.15],
+      [456,342.27,6.99,1.78,0.15],
+      [457,354.97,6.99,1.78,0.15],
+      [458,367.67,6.99,1.78,0.15],
+      [459,380.37,6.99,1.78,0.15],
+      [460,393.07,6.99,1.78,0.15],
+      [461,405.26,6.99,1.91,0.15],
+      [462,417.96,6.99,1.91,0.15],
+      [463,430.66,6.99,2.03,0.15],
+      [464,443.36,6.99,2.16,0.15],
+      [465,456.06,6.99,2.16,0.15],
+      [466,468.76,6.99,2.16,0.15],
+      [467,481.46,6.99,2.29,0.15],
+      [468,494.16,6.99,2.29,0.15],
+      [469,506.86,6.99,2.41,0.15],
+      [470,532.26,6.99,2.41,0.15],
+      [471,557.66,6.99,2.54,0.15],
+      [472,582.68,6.99,2.67,0.15],
+      [473,608.08,6.99,2.79,0.15],
+      [474,633.48,6.99,2.92,0.15],
+      [475,658.88,6.99,3.05,0.15]
+];
+// ---- Materialdata -------------------------------------------------------
+const MATERIALS = {
+  NBR:  { label:'NBR · nitril',      tMin:-30, tMax:100, alpha:112 },
+  HNBR: { label:'HNBR · hydrert',    tMin:-30, tMax:150, alpha:120 },
+  FKM:  { label:'FKM · fluorgummi',  tMin:-20, tMax:200, alpha:162 },
+  EPDM: { label:'EPDM',              tMin:-45, tMax:150, alpha:160 },
+  VMQ:  { label:'VMQ · silikon',     tMin:-55, tMax:200, alpha:250 },
+  FFKM: { label:'FFKM · perfluor',   tMin:-15, tMax:300, alpha:150 }
+};
+// Ekstrusjonsgrense: g_max = K / p^n (mm, p i MPa). Se metodeavsnittet nederst paa siden.
+const EXTRUSION = { 70:{K:2.06,n:1.00}, 80:{K:2.10,n:0.80}, 90:{K:2.21,n:0.63} };
+const GAP_CAP = 0.40;
+
+function extrusionLimit(pressure, hardness){
+  const h = [70,80,90].reduce((b,x)=>Math.abs(x-hardness)<Math.abs(b-hardness)?x:b,70);
+  const {K,n} = EXTRUSION[h];
+  if (pressure <= 0.1) return GAP_CAP;
+  return Math.min(GAP_CAP, K/Math.pow(pressure,n));
+}
+
+// ---- Volumbevarende snortykkelse ---------------------------------------
+// Fri ring: ID = a, snor = b. Torusvolum V = pi^2/4 * b^2 * (a+b).
+// Montert slik at ringens indre (outer=false) eller ytre (outer=true)
+// diameter blir `boundary`, med uendret volum:
+//   indre tilpasning: cs^2 * (boundary + cs) = b^2 * (a+b)
+//   ytre tilpasning:  cs^2 * (boundary - cs) = b^2 * (a+b)
+function fittedCS(a, b, boundary, outer){
+  const T = b*b*(a+b);
+  if (!(boundary > 0) || !(T > 0)) return NaN;
+  const f = cs => outer ? cs*cs*(boundary-cs) : cs*cs*(boundary+cs);
+  // Ytre: f stiger monotont opp til cs = 2*boundary/3 og faller etterpaa.
+  // Den fysiske greina er den stigende (cs -> b naar boundary -> a+2b).
+  let lo = 0, hi = outer ? 2*boundary/3 : Math.max(b*4, 1);
+  if (outer && f(hi) < T) return NaN;           // ringen faar ikke plass
+  if (!outer) while (f(hi) < T) hi *= 2;
+  for (let i=0;i<200;i++){ const m=(lo+hi)/2; if (f(m) < T) lo=m; else hi=m; }
+  return (lo+hi)/2;
+}
+
+const ringVolume = (a,b) => Math.PI*Math.PI/4*b*b*(a+b);
+
+// ---- Kjernegeometri -----------------------------------------------------
+// Betegnelser:
+//   c = boring / sylinderdiameter (hullet)   d = stempel- eller stangdiameter
+//   e = sporbunndiameter                      L = sporbredde
+// Aksialt: c = spor indre diameter, d = spor ytre diameter,
+//          e = spordybde, L = flensspalte.
+function geometry(s, ring, dims, operating){
+  const m = MATERIALS[s.material];
+  const dT = operating ? s.temperature - 20 : 0;
+  const fRub = (1 + m.alpha*1e-6*dT) * Math.cbrt(1 + (operating ? s.swell/100 : 0));
+  const fMet = 1 + s.metalAlpha*1e-6*dT;
+  const a = ring.id*fRub, b = ring.cs*fRub;
+  const c = dims.c*fMet, d = dims.d*fMet, e = dims.e*fMet, L = dims.L*fMet;
+  if (!(a>0 && b>0)) return null;
+
+  let depth, width, boundary, outer, glandVol, gap, machined;
+  if (s.seal === 'piston'){
+    depth = (c - e)/2; width = L; boundary = e; outer = false;
+    glandVol = Math.PI/4*(c*c - e*e)*L;
+    gap = c - d; machined = (d - e)/2;
+  } else if (s.seal === 'rod'){
+    depth = (e - d)/2; width = L; boundary = e; outer = true;
+    glandVol = Math.PI/4*(e*e - d*d)*L;
+    gap = c - d; machined = (e - c)/2;
+  } else {
+    depth = e; width = (d - c)/2; outer = s.direction === 'internal';
+    boundary = outer ? d : c;
+    glandVol = Math.PI/4*(d*d - c*c)*e;
+    gap = L; machined = e;
+  }
+  if (!(depth > 0) || !(width > 0) || !(glandVol > 0) || !(boundary > 0)) return null;
+
+  const csEff = fittedCS(a, b, boundary, outer);
+  if (!Number.isFinite(csEff) || csEff <= 0) return null;
+  const squeeze = 100*(csEff - depth)/csEff;
+  const absSqueeze = csEff - depth;
+  const fill = 100*ringVolume(a,b)/glandVol;
+  const fit = outer ? 100*(1 - boundary/(a + 2*b)) : 100*(boundary/a - 1);
+  return { depth, width, boundary, outer, csEff, squeeze, absSqueeze, fill, fit, gap, machined, a, b, glandVol };
+}
+
+// ---- Toleransestabling --------------------------------------------------
+const DIM_KEYS = ['c','d','e','L'];
+
+function evaluate(s, ring = s.ring){
+  const nom = {}; DIM_KEYS.forEach(k => nom[k] = s.dims[k].n);
+  const nominal  = geometry(s, ring, nom, true);
+  const assembly = geometry(s, ring, nom, false);
+  if (!nominal || !assembly) return { valid:false };
+
+  const all = [], fitsAssembly = [];
+  for (let mask = 0; mask < 64; mask++){
+    const r = { id: ring.id + ((mask&1)? ring.idTol : -ring.idTol),
+                cs: ring.cs + ((mask&2)? ring.csTol : -ring.csTol) };
+    if (!(r.id > 0 && r.cs > 0)) continue;
+    const ds = {};
+    DIM_KEYS.forEach((k,i) => ds[k] = s.dims[k].n + ((mask & (1<<(i+2))) ? s.dims[k].plus : -s.dims[k].minus));
+    for (const op of [false, true]){
+      const g = geometry(s, r, ds, op);
+      if (g){ all.push(g); if (!op) fitsAssembly.push(g.fit); }
+    }
+  }
+  if (!all.length) return { valid:false };
+
+  const span = sel => { const v = all.map(sel); return [Math.min(...v), Math.max(...v)]; };
+  const [minSq, maxSq]   = span(g => g.squeeze);
+  const [minAbs]         = span(g => g.absSqueeze);
+  const [minFill, maxFill] = span(g => g.fill);
+  const [minGap, maxGap] = span(g => g.gap);
+  const minFit = Math.min(...fitsAssembly), maxFit = Math.max(...fitsAssembly);
+
+  const limits  = s.dynamic ? [10,20] : [15,30];
+  const fitLimit = nominal.outer ? 3 : 5;
+  const gapLimit = extrusionLimit(s.pressure, s.hardness);
+  const minAbsLimit = s.dynamic ? 0.10 : 0.13;
+
+  // Harde krav. Brytes de, virker ikke tetningen som tenkt.
+  const ok = {
+    squeeze: minSq >= limits[0]-1e-9 && maxSq <= limits[1]+1e-9,
+    absolute: minAbs >= minAbsLimit-1e-9,
+    fill: maxFill <= 85+1e-9,
+    fit: maxFit <= fitLimit+1e-9,
+    gap: maxGap <= gapLimit+1e-9 && minGap >= -1e-9,
+    temp: s.temperature >= MATERIALS[s.material].tMin && s.temperature <= MATERIALS[s.material].tMax
+  };
+  // Myke merknader. Verdt aa vite, men ikke i seg selv en feil.
+  const warn = {
+    loose: minFit < -1e-9,                 // ringen kan ligge lost i sporet
+    lowFill: maxFill < 50,                 // rommelig spor, ringen kan rulle
+    spiral: s.dynamic && ring.cs > 3.5,    // tykk snor i frem- og tilbakegang
+    highSqueeze: maxSq > limits[1] - 2     // ligger i overkant av vinduet
+  };
+  const penalty = Math.max(0,limits[0]-minSq) + Math.max(0,maxSq-limits[1])
+                + Math.max(0,maxFill-85) + 5*(Math.max(0,-minFit) + Math.max(0,maxFit-fitLimit));
+  return { valid:true, nominal, assembly, minSq, maxSq, minAbs, minFill, maxFill, minGap, maxGap,
+           minFit, maxFit, limits, fitLimit, gapLimit, minAbsLimit, ok, warn,
+           good: ok.squeeze && ok.absolute && ok.fill && ok.fit && ok.gap,
+           score: penalty*100 + Math.abs(nominal.squeeze - s.target) + Math.abs(nominal.fill - 75)/10 };
+}
+// ---- Forslag til spormaal ------------------------------------------------
+// Fyller ut de maalene som ikke er laast. Sporhoyden settes fra onsket klem,
+// sporbredden fra 75 % sporfylling, og klaringen fra oppgitt verdi.
+const FILL_TARGET = 0.75, FILL_MAX = 0.85, NOMINAL_FIT = 0.015;
+function suggest(s, isLocked){
+  const out = { c:s.dims.c.n, d:s.dims.d.n, e:s.dims.e.n, L:s.dims.L.n };
+  const a = s.ring.id, b = s.ring.cs;
+  const frac = 1 - s.target/100;          // sporhoyde / effektiv snortykkelse
+  const clr = s.clearance;
+  const V = ringVolume(a, b);
+  // Verste ring innenfor toleransene, slik at sporet ikke overfylles.
+  const Vmax = ringVolume(a + (s.ring.idTol||0), b + (s.ring.csTol||0));
+  // Bredde som gir 75 % fylling nominelt, men aldri over 85 % med verste ring.
+  const widthFor = (D1, D2) => {
+    const ann = Math.PI/4*Math.abs(D1*D1 - D2*D2);
+    return Math.max(V/(FILL_TARGET*ann), Vmax/(FILL_MAX*ann));
+  };
+  if (s.seal === 'piston'){
+    if (!isLocked('c') && isLocked('d')) out.c = out.d + clr;
+    if (!isLocked('d')) out.d = out.c - clr;
+    if (!isLocked('e')){
+      let e = out.c - 2*b*frac;
+      for (let i=0;i<80;i++){ const cs = fittedCS(a,b,e,false); if(!Number.isFinite(cs)) break; e = out.c - 2*cs*frac; }
+      out.e = e;
+    }
+    if (!isLocked('L')) out.L = widthFor(out.c, out.e);
+  } else if (s.seal === 'rod'){
+    if (!isLocked('d') && isLocked('c')) out.d = out.c - clr;
+    if (!isLocked('c')) out.c = out.d + clr;
+    if (!isLocked('e')){
+      let e = out.d + 2*b*frac;
+      for (let i=0;i<80;i++){ const cs = fittedCS(a,b,e,true); if(!Number.isFinite(cs)) break; e = out.d + 2*cs*frac; }
+      out.e = e;
+    }
+    if (!isLocked('L')) out.L = widthFor(out.e, out.d);
+  } else {
+    // Aksialt: ringen legges mot den sporveggen trykket presser den mot,
+    // med en liten forspenning slik at toleransene ikke gjor den los.
+    if (s.direction === 'internal'){
+      if (!isLocked('d')) out.d = (a + 2*b)*(1 - NOMINAL_FIT);
+      if (!isLocked('e')){ const cs = fittedCS(a,b,out.d,true); out.e = (Number.isFinite(cs)?cs:b)*frac; }
+      if (!isLocked('c')){
+        const ann = Math.max(V/(FILL_TARGET*out.e), Vmax/(FILL_MAX*out.e));
+        out.c = Math.sqrt(Math.max(1e-9, out.d*out.d - 4*ann/Math.PI));
+      }
+    } else {
+      if (!isLocked('c')) out.c = a*(1 + NOMINAL_FIT);
+      if (!isLocked('e')){ const cs = fittedCS(a,b,out.c,false); out.e = (Number.isFinite(cs)?cs:b)*frac; }
+      if (!isLocked('d')){
+        const ann = Math.max(V/(FILL_TARGET*out.e), Vmax/(FILL_MAX*out.e));
+        out.d = Math.sqrt(out.c*out.c + 4*ann/Math.PI);
+      }
+    }
+  }
+  return widenForFill(s, out, isLocked);
+}
+
+// Kontrollerer forslaget mot hele toleransestablingen og utvider sporet til
+// verste tilfelle ligger under grensen for sporfylling.
+function widenForFill(s, out, isLocked){
+  const mk = o => Object.assign({}, s, { dims: {
+    c:{n:o.c,plus:s.dims.c.plus,minus:s.dims.c.minus}, d:{n:o.d,plus:s.dims.d.plus,minus:s.dims.d.minus},
+    e:{n:o.e,plus:s.dims.e.plus,minus:s.dims.e.minus}, L:{n:o.L,plus:s.dims.L.plus,minus:s.dims.L.minus} } });
+  for (let i=0;i<10;i++){
+    const r = evaluate(mk(out), s.ring);
+    if (!r.valid || !(r.maxFill > FILL_MAX*100)) break;
+    const k = r.maxFill/(FILL_MAX*100)*1.002;
+    if (s.seal === 'axial'){
+      const ann = (out.d*out.d - out.c*out.c)*k;
+      if (s.direction === 'internal' && !isLocked('c')) out.c = Math.sqrt(Math.max(1e-9, out.d*out.d - ann));
+      else if (s.direction === 'external' && !isLocked('d')) out.d = Math.sqrt(out.c*out.c + ann);
+      else break;
+    } else if (!isLocked('L')) out.L *= k;
+    else break;
+  }
+  return out;
+}
+
+
+/* ====================== GRENSESNITT ====================== */
+
+const DIMS = {
+  piston: [['c','Sylinderdiameter','c'],['d','Stempeldiameter','d'],['e','Sporbunndiameter','e'],['L','Sporbredde','L']],
+  rod:    [['c','Hulldiameter','c'],['d','Stangdiameter','d'],['e','Sporbunndiameter','e'],['L','Sporbredde','L']],
+  axial:  [['c','Spor, indre diameter','c'],['d','Spor, ytre diameter','d'],['e','Spordybde','h'],['L','Flensspalte','s']]
+};
+const SEAL_NOTE = {
+  piston: 'Sporet ligger i stempelet. Ringen tetter mot sylinderveggen.',
+  rod:    'Sporet ligger i huset. Ringen tetter mot stangen.',
+  axial:  'Flatpakning mellom to flenser. Klemmes aksialt, ikke radialt.'
+};
+const EXAMPLES = {
+  piston: { size:224, c:'50.00', d:'49.92', e:'44.52', L:'4.79', lock:'c' },
+  rod:    { size:224, c:'45.08', d:'45.00', e:'50.54', L:'4.69', lock:'d' },
+  axial:  { size:224, c:'40.49', d:'50.33', e:'2.78',  L:'0.00', lock:'d' }
+};
+const LOCK_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10.5" rx="2.2"/><path class="sh-shut" d="M8.2 10.5V6.6a3.8 3.8 0 0 1 7.6 0v3.9"/><path class="sh-open" d="M8.2 10.5V6.6a3.8 3.8 0 0 1 7.6 0"/></svg>';
+
+let seal = 'piston';
+let summary = '';
+const $ = id => document.getElementById(id);
+const nf = (n, d = 2) => Number.isFinite(n) ? n.toLocaleString('nb-NO', { minimumFractionDigits: d, maximumFractionDigits: d }) : '–';
+const r2 = n => Math.round(n * 100) / 100;
+const asCode = n => 'AS568-' + String(n).padStart(3, '0');
+const locked = id => { const b = document.querySelector('[data-lock="' + id + '"]'); return !!b && b.getAttribute('aria-pressed') === 'true'; };
+
+/* ---------- utfylling av nedtrekkslister ---------- */
+function fillMaterials() {
+  $('mat').innerHTML = Object.keys(MATERIALS)
+    .map(k => '<option value="' + k + '">' + MATERIALS[k].label + '</option>').join('');
+}
+function fillCS(pick) {
+  const list = [...new Set(SIZES.map(r => r[2]))].sort((a, b) => a - b);
+  $('cs-sel').innerHTML = list.map(cs => '<option value="' + cs + '">' + nf(cs) + ' mm</option>').join('');
+  if (pick !== undefined) $('cs-sel').value = pick;
+}
+function fillIDs(pickNo) {
+  const cs = Number($('cs-sel').value);
+  const rows = SIZES.filter(r => r[2] === cs);
+  $('id-sel').innerHTML = rows.map(r =>
+    '<option value="' + r[0] + '">' + nf(r[1]) + ' mm · ' + String(r[0]).padStart(3, '0') + '</option>').join('');
+  if (rows.some(r => r[0] === pickNo)) $('id-sel').value = pickNo;
+}
+function selectSize(no) {
+  const row = SIZES.find(r => r[0] === no) || SIZES[0];
+  fillCS(row[2]); fillIDs(row[0]); syncRing();
+}
+function syncRing() {
+  if ($('std').checked) {
+    const row = SIZES.find(r => r[0] === Number($('id-sel').value));
+    if (row) { $('r-id').value = nf(row[1]); $('r-cs').value = nf(row[2]); $('r-id-tol').value = nf(row[3]); $('r-cs-tol').value = nf(row[4]); }
+  }
+  $('std-fields').hidden = !$('std').checked;
+  $('custom-fields').hidden = $('std').checked;
+  $('r-id').readOnly = $('r-cs').readOnly = $('r-id-tol').readOnly = $('r-cs-tol').readOnly = $('std').checked;
+}
+
+/* ---------- spormålsrader ---------- */
+function renderDims(vals) {
+  $('dims').innerHTML = DIMS[seal].map(function (row) {
+    const id = row[0], label = row[1], sym = row[2];
+    const tolDef = id === 'L' ? ['0.10', '0.00'] : ['0.025', '0.025'];
+    return '<div class="dim">' +
+      '<label for="' + id + '">' + label + ' <em>· ' + sym + '</em></label>' +
+      '<input id="' + id + '" type="text" inputmode="decimal" value="' + vals[id] + '" data-num data-min="0" data-max="3000" data-label="' + label + '">' +
+      '<input id="' + id + '-plus" class="tol" type="text" inputmode="decimal" value="' + tolDef[0] + '" data-num data-min="0" data-max="10" data-label="Plusstoleranse for ' + label + '" aria-label="' + label + ', plusstoleranse" title="Plusstoleranse" placeholder="+">' +
+      '<input id="' + id + '-minus" class="tol" type="text" inputmode="decimal" value="' + tolDef[1] + '" data-num data-min="0" data-max="10" data-label="Minustoleranse for ' + label + '" aria-label="' + label + ', minustoleranse" title="Minustoleranse" placeholder="−">' +
+      '<button type="button" class="lock" data-lock="' + id + '" aria-pressed="false" title="Lås ' + label + ' ved forslag" aria-label="Lås ' + label + ' ved forslag">' + LOCK_SVG + '</button>' +
+      '</div>';
+  }).join('');
+}
+
+/* ---------- innlesing ---------- */
+function readInputs() {
+  const v = {}, errors = [];
+  document.querySelectorAll('[data-num]').forEach(function (el) {
+    const raw = el.value.trim().replace(',', '.');
+    const num = /^[-+]?(?:\d+(?:\.\d*)?|\.\d+)$/.test(raw) ? Number(raw) : NaN;
+    const lo = Number(el.dataset.min), hi = Number(el.dataset.max);
+    const bad = !Number.isFinite(num) || num < lo || num > hi;
+    el.setAttribute('aria-invalid', bad ? 'true' : 'false');
+    if (bad) errors.push(el.dataset.label + ' må være et tall mellom ' + nf(lo) + ' og ' + nf(hi) + '.');
+    v[el.id] = num;
+  });
+  const dims = {};
+  DIMS[seal].forEach(function (row) {
+    dims[row[0]] = { n: v[row[0]], plus: v[row[0] + '-plus'], minus: v[row[0] + '-minus'] };
+  });
+  return {
+    seal: seal, dynamic: $('dynamic').checked, direction: $('dir').value,
+    ring: { id: v['r-id'], cs: v['r-cs'], idTol: v['r-id-tol'], csTol: v['r-cs-tol'],
+            code: $('std').checked ? Number($('id-sel').value) : null },
+    dims: dims, material: $('mat').value, metalAlpha: Number($('metal').value),
+    hardness: Number($('hard').value), temperature: v.temp, pressure: v.press,
+    swell: v.swell, target: v.target, clearance: v.clear, errors: errors
+  };
+}
+
+/* ---------- figur ---------- */
+const FIG_DEFS = '<defs>' +
+  '<pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">' +
+  '<rect width="7" height="7" fill="var(--metal)"/><line x1="0" y1="0" x2="0" y2="7" stroke="var(--line-strong)" stroke-width="1.5"/></pattern>' +
+  '<marker id="ar" markerWidth="7" markerHeight="7" refX="3.5" refY="3.5" orient="auto-start-reverse">' +
+  '<path d="M0.5 0.5 L6 3.5 L0.5 6.5" fill="none" stroke="var(--faint)" stroke-width="1.2"/></marker></defs>';
+
+function drawFigure(s, r) {
+  const svg = $('fig');
+  if (!r || !r.valid) {
+    svg.innerHTML = FIG_DEFS + '<text x="240" y="108" text-anchor="middle" font-size="12.5" fill="var(--faint)">Ingen gyldig geometri å vise</text>';
+    return;
+  }
+  const g = r.nominal;
+  const L = g.width, h = g.depth, bE = g.csEff;
+  const scale = Math.min(212 / L, 74 / bE);
+  const wPx = L * scale, hPx = h * scale, bPx = bE * scale;
+  const area = Math.PI / 4 * bE * bE;
+  const wRing = Math.max(h, (area - Math.PI / 4 * h * h) / h + h) * scale;
+  const gapPx = Math.max(2.5, Math.min(14, (s.seal === 'axial' ? g.gap : g.gap) * scale));
+
+  const up = s.seal === 'rod';                 // sporet ligger over tetteflaten
+  const dir = up ? -1 : 1;
+  const yFace = up ? 132 : 84;
+  const yLand = yFace + dir * gapPx;
+  const yRoot = yFace + dir * hPx;
+  const gl = 240 - wPx / 2, gr = 240 + wPx / 2;
+  const far = up ? 30 : 186;                   // ytterkant av den delen sporet står i
+  const near = up ? 186 : 30;                  // ytterkant av motflaten
+
+  const grooved = 'M24 ' + yLand + 'H' + gl.toFixed(1) + 'V' + yRoot.toFixed(1) + 'H' + gr.toFixed(1) +
+                  'V' + yLand + 'H456V' + far + 'H24Z';
+  const counter = 'M24 ' + yFace + 'H456V' + near + 'H24Z';
+  const cy = (yFace + yRoot) / 2;
+  const rx = wRing / 2, ry = hPx / 2;
+  const straight = Math.max(0, rx - ry);
+  const ringPath = 'M' + (240 - straight) + ' ' + (cy - ry) + 'H' + (240 + straight) +
+    'a' + ry + ' ' + ry + ' 0 0 1 0 ' + (2 * ry) + 'H' + (240 - straight) +
+    'a' + ry + ' ' + ry + ' 0 0 1 0 ' + (-2 * ry) + 'Z';
+
+  const names = s.seal === 'piston' ? ['Sylinder', 'Stempel'] : s.seal === 'rod' ? ['Stang', 'Hus'] : ['Motflens', 'Sporflens'];
+  const dimY = up ? 40 : 176;                  // linje for sporbredde
+  const tick = up ? -1 : 1;
+
+  svg.innerHTML = FIG_DEFS +
+    '<path d="' + counter + '" fill="url(#hatch)" stroke="var(--faint)" stroke-width="1.4" stroke-linejoin="round"/>' +
+    '<path d="' + grooved + '" fill="url(#hatch)" stroke="var(--faint)" stroke-width="1.4" stroke-linejoin="round"/>' +
+    '<circle cx="240" cy="' + cy + '" r="' + (bPx / 2) + '" fill="none" stroke="var(--accent)" stroke-width="1.2" stroke-dasharray="3 3" opacity=".55"/>' +
+    '<path d="' + ringPath + '" fill="var(--accent)" fill-opacity=".17" stroke="var(--accent)" stroke-width="2"/>' +
+    // sporbredde
+    '<path d="M' + gl.toFixed(1) + ' ' + (yRoot + tick * 4) + 'V' + dimY + 'M' + gr.toFixed(1) + ' ' + (yRoot + tick * 4) + 'V' + dimY + '" stroke="var(--line-strong)" stroke-width="1"/>' +
+    '<path d="M' + (gl + 1).toFixed(1) + ' ' + dimY + 'H' + (gr - 1).toFixed(1) + '" stroke="var(--faint)" stroke-width="1" marker-start="url(#ar)" marker-end="url(#ar)"/>' +
+    '<rect x="206" y="' + (dimY - 9) + '" width="68" height="18" rx="4" fill="var(--panel)"/>' +
+    '<text x="240" y="' + (dimY + 4) + '" text-anchor="middle" font-size="11" fill="var(--dim)">' + DIMS[seal][3][2] + ' ' + nf(L) + '</text>' +
+    // spordybde
+    '<path d="M' + (gr + 6).toFixed(1) + ' ' + yFace + 'H438M' + (gr + 6).toFixed(1) + ' ' + yRoot.toFixed(1) + 'H438" stroke="var(--line-strong)" stroke-width="1"/>' +
+    '<path d="M433 ' + (yFace + dir * 1.5) + 'V' + (yRoot - dir * 1.5).toFixed(1) + '" stroke="var(--faint)" stroke-width="1" marker-start="url(#ar)" marker-end="url(#ar)"/>' +
+    '<rect x="376" y="' + (cy - 9) + '" width="62" height="18" rx="4" fill="var(--panel)"/>' +
+    '<text x="407" y="' + (cy + 4) + '" text-anchor="middle" font-size="11" fill="var(--dim)">h ' + nf(h) + '</text>' +
+    '<text x="32" y="' + (up ? 170 : 54) + '" font-size="10.5" fill="var(--faint)">' + names[0] + '</text>' +
+    '<text x="32" y="' + (up ? 54 : 170) + '" font-size="10.5" fill="var(--faint)">' + names[1] + '</text>' +
+    '<text x="456" y="204" text-anchor="end" font-size="10" fill="var(--faint)">stiplet omriss: fri snor ' + nf(bE) + ' mm</text>';
+}
+
+/* ---------- måletavle ---------- */
+function metricHTML(m) {
+  const span = Math.max(m.max - m.min, 0);
+  const pos = x => Math.max(0, Math.min(100, x / m.scale * 100));
+  const bandL = pos(Math.max(0, m.lo)), bandR = pos(m.hi);
+  const valL = pos(m.min), valR = pos(m.max);
+  return '<div class="metric ' + m.level + '">' +
+    '<div class="m-lab"><span>' + m.name + '</span><span>' + m.goal + '</span></div>' +
+    '<div class="m-val">' + nf(m.value, m.dec) + '<small> ' + m.unit + '</small></div>' +
+    '<div class="bar"><u style="left:' + bandL + '%;width:' + Math.max(0, bandR - bandL) + '%"></u>' +
+    '<i style="left:' + valL + '%;width:' + Math.max(1.5, valR - valL) + '%"></i></div>' +
+    '<div class="m-range">' + (span < Math.pow(10, -m.dec) ? 'uten spredning' : nf(m.min, m.dec) + ' – ' + nf(m.max, m.dec) + ' ' + m.unit) + '</div>' +
+    '</div>';
+}
+
+/* ---------- hovedoppdatering ---------- */
+function update() {
+  const s = readInputs();
+  const r = s.errors.length ? null : evaluate(s);
+  const fail = !r || !r.valid;
+
+  $('res-body').hidden = fail;
+  $('res-error').hidden = !fail;
+  drawFigure(s, r);
+
+  if (fail) {
+    const why = s.errors.length ? s.errors[0]
+      : 'Målene gir ingen mulig geometri. Kontroller at sporbunnen ligger på riktig side av tetteflaten, og at sporet er bredere enn null.';
+    $('res-error').textContent = why;
+    $('verdict').className = 'pill bad';
+    $('verdict').textContent = 'Kontroller målene';
+    summary = '';
+    return;
+  }
+
+  const mat = MATERIALS[s.material];
+  const outer = r.nominal.outer;
+  const lvl = b => b ? 'ok' : 'bad';
+
+  $('verdict').className = 'pill ' + (r.good ? (Object.values(r.warn).some(Boolean) ? 'warn' : 'ok') : 'bad');
+  $('verdict').textContent = r.good ? (Object.values(r.warn).some(Boolean) ? 'Se merknader' : 'Innenfor anbefaling') : 'Utenfor anbefaling';
+
+  $('ring-name').innerHTML = nf(s.ring.id) + ' × ' + nf(s.ring.cs) + ' <small>mm</small>';
+  $('ring-sub').textContent = (s.ring.code ? asCode(s.ring.code) : 'Egendefinert mål') + ' · ' +
+    (seal === 'piston' ? 'stempeltetning' : seal === 'rod' ? 'stangtetning' : 'aksialtetning') + ' · ' +
+    (s.dynamic ? 'dynamisk' : 'statisk') + ' · ' + s.material + ' ' + s.hardness + ' Shore A';
+
+  $('metrics').innerHTML = [
+    { name: 'Klem', goal: r.limits[0] + '–' + r.limits[1] + ' %', unit: '%', dec: 1, value: r.nominal.squeeze,
+      min: r.minSq, max: r.maxSq, lo: r.limits[0], hi: r.limits[1], scale: 40, level: lvl(r.ok.squeeze) },
+    { name: 'Sporfylling', goal: 'maks 85 %', unit: '%', dec: 1, value: r.nominal.fill,
+      min: r.minFill, max: r.maxFill, lo: 0, hi: 85, scale: 100, level: lvl(r.ok.fill) },
+    { name: outer ? 'Kompresjon av ytre Ø' : 'Strekk', goal: 'maks ' + r.fitLimit + ' %', unit: '%', dec: 2,
+      value: r.nominal.fit, min: r.minFit, max: r.maxFit, lo: 0, hi: r.fitLimit,
+      scale: r.fitLimit * 2, level: lvl(r.ok.fit) },
+    { name: 'Ekstrusjonsgap', goal: 'maks ' + nf(r.gapLimit, 3) + ' mm', unit: 'mm', dec: 3, value: r.nominal.gap,
+      min: r.minGap, max: r.maxGap, lo: 0, hi: r.gapLimit, scale: Math.max(r.gapLimit * 2, r.maxGap * 1.2),
+      level: lvl(r.ok.gap) }
+  ].map(metricHTML).join('');
+
+  const rows = DIMS[seal].map(function (row) {
+    const d = s.dims[row[0]];
+    return [row[1] + ' · ' + row[2], nf(d.n) + ' <em>+' + nf(d.plus, 3) + ' / −' + nf(d.minus, 3) + '</em> mm'];
+  });
+  rows.push(['Sporhøyde (klemhøyde)', nf(r.nominal.depth) + ' mm']);
+  rows.push(['Effektiv snortykkelse', nf(r.nominal.csEff) + ' mm']);
+  rows.push(['Absolutt klem', nf(r.nominal.absSqueeze) + ' <em>min ' + nf(r.minAbs) + '</em> mm']);
+  if (seal !== 'axial') rows.push(['Sporets frestedybde', nf(r.nominal.machined) + ' mm']);
+  $('res-tab').innerHTML = rows.map(x => '<tr><th scope="row">' + x[0] + '</th><td>' + x[1] + '</td></tr>').join('');
+
+  const ck = [];
+  const put = (level, text) => ck.push([level, text]);
+  put(r.ok.squeeze ? 'ok' : 'bad', r.ok.squeeze
+    ? 'Klemmen holder seg i ' + nf(r.minSq, 1) + '–' + nf(r.maxSq, 1) + ' % gjennom hele toleransestablingen.'
+    : 'Klemmen går utenfor ' + r.limits[0] + '–' + r.limits[1] + ' % (blir ' + nf(r.minSq, 1) + '–' + nf(r.maxSq, 1) + ' %). ' +
+      (r.minSq < r.limits[0] ? 'For lite klem gir lekkasje ved lavt trykk og i kulde.' : 'For mye klem gir friksjon, varme og raskere aldring.'));
+  if (!r.ok.absolute) put('bad', 'Minste absolutte klem er ' + nf(r.minAbs) + ' mm, under ' + nf(r.minAbsLimit) + ' mm. På tynne snorer spiser ruhet og ovalitet opp klemmen.');
+  put(r.ok.fill ? 'ok' : 'bad', r.ok.fill
+    ? 'Sporfyllingen når høyst ' + nf(r.maxFill, 1) + ' %, med rom igjen for varme og svelling.'
+    : 'Sporfyllingen når ' + nf(r.maxFill, 1) + ' %. Over 85 % er det for lite rom til varmeutvidelse, og hydraulisk lås kan sprenge sporet.');
+  put(r.ok.fit ? 'ok' : 'bad', (outer
+    ? 'Ytre diameter presses sammen ' + nf(r.minFit, 1) + '–' + nf(r.maxFit, 1) + ' %'
+    : 'Ringen strekkes ' + nf(r.minFit, 1) + '–' + nf(r.maxFit, 1) + ' %') +
+    (r.ok.fit ? ', innenfor ' + r.fitLimit + ' %.' : ', over grensen på ' + r.fitLimit + ' %. ' +
+      (outer ? 'For mye kompresjon får ringen til å bukle i sporet.' : 'Strekk tynner snoren og gir varig strekkspenning i gummien.')));
+  put(r.ok.gap ? 'ok' : 'bad', r.ok.gap
+    ? 'Ekstrusjonsgapet blir høyst ' + nf(r.maxGap, 3) + ' mm mot en veiledende grense på ' + nf(r.gapLimit, 3) + ' mm ved ' + nf(s.pressure, 0) + ' MPa.'
+    : (r.minGap < 0 ? 'Klaringen blir negativ. Kontroller at boring og stempel har riktig innbyrdes mål.'
+      : 'Gapet blir ' + nf(r.maxGap, 3) + ' mm mot veiledende grense ' + nf(r.gapLimit, 3) + ' mm ved ' + nf(s.pressure, 0) + ' MPa og ' + s.hardness + ' Shore A. Stram pasningen, velg hardere gummi, eller bruk støttering.'));
+  put(r.ok.temp ? 'ok' : 'warn', r.ok.temp
+    ? s.material + ' dekker ' + nf(s.temperature, 0) + ' °C (' + mat.tMin + ' til ' + mat.tMax + ' °C).'
+    : nf(s.temperature, 0) + ' °C ligger utenfor vanlig område for ' + s.material + ' (' + mat.tMin + ' til ' + mat.tMax + ' °C). Velg et annet materiale eller bekreft blandingen.');
+  if (r.warn.loose) put('warn', 'I verste toleransetilfelle ligger ringen så vidt løst mot sporbunnen (' + nf(r.minFit, 2) + ' %). Den holdes fortsatt av klemmen, men kan være vanskelig å få på plass ved montering.');
+  if (r.warn.lowFill) put('warn', 'Sporfyllingen er bare ' + nf(r.minFill, 1) + ' % på det laveste. Et romslig spor lar ringen rulle, som ved bevegelse kan gi spiralbrudd.');
+  if (r.warn.spiral) put('warn', 'Snor på ' + nf(s.ring.cs) + ' mm i dynamisk bruk er utsatt for spiralbrudd. Vurder tynnere snor, bedre smøring eller en profiltetning.');
+  if (s.swell > 0) put('warn', 'Svellingen på ' + nf(s.swell, 0) + ' % er regnet inn i drift. Kontroller verdien mot medium og temperatur.');
+  if (s.pressure > 0 && s.dynamic && s.pressure > 35) put('warn', 'Over 35 MPa i dynamisk bruk er en ren O-ring sjelden nok alene. Vurder en profiltetning med støttering.');
+  $('checks').innerHTML = ck.map(x => '<div class="ck ' + x[0] + '"><b>' + (x[0] === 'ok' ? '✓' : x[0] === 'warn' ? '!' : '×') + '</b><span>' + x[1] + '</span></div>').join('');
+
+  summary = ['O-RING – SPORDIMENSJONERING', '',
+    (s.ring.code ? asCode(s.ring.code) : 'Egendefinert') + ': ' + nf(s.ring.id) + ' × ' + nf(s.ring.cs) + ' mm (±' + nf(s.ring.idTol) + ' / ±' + nf(s.ring.csTol) + ')',
+    $('ring-sub').textContent, '']
+    .concat(DIMS[seal].map(row => row[1] + ' (' + row[2] + '): ' + nf(s.dims[row[0]].n) + ' +' + nf(s.dims[row[0]].plus, 3) + ' / −' + nf(s.dims[row[0]].minus, 3) + ' mm'))
+    .concat(['', 'Sporhøyde: ' + nf(r.nominal.depth) + ' mm',
+      'Klem: ' + nf(r.nominal.squeeze, 1) + ' % (' + nf(r.minSq, 1) + '–' + nf(r.maxSq, 1) + ' %)',
+      'Sporfylling: ' + nf(r.nominal.fill, 1) + ' % (maks ' + nf(r.maxFill, 1) + ' %)',
+      (outer ? 'Kompresjon ytre Ø: ' : 'Strekk: ') + nf(r.nominal.fit, 2) + ' % (' + nf(r.minFit, 2) + '–' + nf(r.maxFit, 2) + ' %)',
+      'Ekstrusjonsgap: maks ' + nf(r.maxGap, 3) + ' mm (veiledende grense ' + nf(r.gapLimit, 3) + ' mm)',
+      'Drift: ' + nf(s.pressure, 1) + ' MPa, ' + nf(s.temperature, 0) + ' °C, volumendring ' + nf(s.swell, 1) + ' %', ''])
+    .concat(ck.map(x => (x[0] === 'ok' ? '[ok] ' : x[0] === 'warn' ? '[merk] ' : '[avvik] ') + x[1]))
+    .concat(['', 'Geometrisk forberegning ved 20 °C referanse. Ikke en samsvarskontroll mot ISO 3601-2.',
+      'Materiale, medium, trykk og ekstrusjonsgap må verifiseres mot leverandørens data.']).join('\n');
+}
+
+/* ---------- forslag ---------- */
+function say(text, bad) {
+  const el = $('msg');
+  el.textContent = text; el.className = 'msg' + (bad ? ' bad' : ''); el.hidden = false;
+}
+function doSuggest() {
+  const s = readInputs();
+  const ringBad = ['r-id', 'r-cs', 'r-id-tol', 'r-cs-tol'].some(id => $(id).getAttribute('aria-invalid') === 'true');
+  if (ringBad) { say('Rett O-ringens mål før du ber om et forslag.', true); return; }
+  const anchor = DIMS[seal].map(r => r[0]).filter(id => locked(id));
+  if (!anchor.length) {
+    const need = seal === 'piston' ? 'c' : seal === 'rod' ? 'd' : null;
+    if (need && !Number.isFinite(s.dims[need].n)) { say('Lås minst ett mål, eller fyll inn ' + DIMS[seal].find(r => r[0] === need)[1].toLowerCase() + ' først.', true); return; }
+  }
+  const out = suggest(s, locked);
+  if (['c', 'd', 'e', 'L'].some(k => !Number.isFinite(out[k]) || out[k] < 0)) {
+    say('Denne ringen gir ingen mulig geometri med de låste målene. Prøv en annen størrelse eller lås færre mål.', true); return;
+  }
+  let n = 0;
+  DIMS[seal].forEach(function (row) {
+    if (locked(row[0])) return;
+    $(row[0]).value = nf(r2(out[row[0]]));
+    n++;
+  });
+  update();
+  const after = evaluate(readInputs());
+  say(n + ' mål fylt ut fra ' + nf(s.target, 0) + ' % ønsket klem og 75 % sporfylling. ' +
+    (after.valid && after.good ? 'Forslaget ligger innenfor alle grensene.' : 'Forslaget bryter minst én grense – se kontrollpunktene.'),
+    !(after.valid && after.good));
+}
+
+/* ---------- eksempel ---------- */
+function loadExample(type) {
+  seal = type || 'piston';
+  const ex = EXAMPLES[seal];
+  document.querySelectorAll('[data-seal]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.seal === seal)));
+  $('seal-note').textContent = SEAL_NOTE[seal];
+  $('dir-wrap').hidden = seal !== 'axial';
+  $('dynamic').disabled = seal === 'axial';
+  // Eksempelet er en statisk konstruksjon ved romtemperatur; tilbakestill hele driftstilstanden.
+  document.querySelector('input[name=app][value=static]').checked = true;
+  $('dir').value = 'internal';
+  $('press').value = '10'; $('temp').value = '20'; $('swell').value = '0';
+  $('mat').value = 'NBR'; $('hard').value = '70'; $('metal').value = '12'; $('clear').value = '0.08';
+  $('std').checked = true;
+  selectSize(ex.size);
+  renderDims(ex);
+  const lk = document.querySelector('[data-lock="' + ex.lock + '"]');
+  if (lk) lk.setAttribute('aria-pressed', 'true');
+  $('target').value = $('dynamic').checked ? '15' : '22';
+  $('dims-note').textContent = seal === 'axial'
+    ? 'Spordybden er klemhøyden. Flensspalten er gapet mellom flensene, normalt null ved metallisk anlegg.'
+    : 'Lås målene som allerede er bestemt i konstruksjonen, så beholdes de når du ber om et forslag.';
+  $('msg').hidden = true;
+  $('copy-msg').hidden = true;
+  update();
+}
+
+/* ---------- hendelser ---------- */
+$('form').addEventListener('submit', e => e.preventDefault());
+$('form').addEventListener('input', function (e) {
+  if (!e.target.matches('[data-num]')) return;
+  $('msg').hidden = true; update();
+});
+$('form').addEventListener('change', function (e) {
+  if (e.target.id === 'cs-sel') { fillIDs(); syncRing(); }
+  else if (e.target.id === 'id-sel' || e.target.id === 'std') syncRing();
+  else if (e.target.name === 'app') $('target').value = $('dynamic').checked ? '15' : '22';
+  $('msg').hidden = true; update();
+});
+$('form').addEventListener('click', function (e) {
+  const lk = e.target.closest('[data-lock]');
+  if (lk) { lk.setAttribute('aria-pressed', lk.getAttribute('aria-pressed') === 'true' ? 'false' : 'true'); return; }
+  const t = e.target.closest('[data-seal]');
+  if (t && t.dataset.seal !== seal) { loadExample(t.dataset.seal); say('Eksempelmål lastet for denne tetningstypen. Legg inn dine egne mål.'); }
+});
+$('suggest').addEventListener('click', doSuggest);
+$('reset').addEventListener('click', function () { loadExample(seal); });
+$('print').addEventListener('click', function () { window.print(); });
+$('copy').addEventListener('click', async function () {
+  if (!summary) return;
+  let done = false;
+  try { if (navigator.clipboard && navigator.clipboard.writeText) { await navigator.clipboard.writeText(summary); done = true; } } catch (err) { done = false; }
+  if (!done) {
+    const ta = document.createElement('textarea');
+    ta.value = summary; ta.style.cssText = 'position:fixed;left:-9999px;top:0';
+    document.body.appendChild(ta); ta.select();
+    try { done = document.execCommand('copy'); } catch (err) { done = false; }
+    ta.remove();
+  }
+  const el = $('copy-msg');
+  el.textContent = done ? 'Oppsummeringen er kopiert.' : 'Nettleseren tillot ikke kopiering. Bruk «Skriv ut» i stedet.';
+  el.className = 'msg' + (done ? '' : ' bad');
+  el.hidden = false;
+});
+
+fillMaterials();
+loadExample('piston');
+</script>
+</body>
+</html>
